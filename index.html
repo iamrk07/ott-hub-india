@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎬 OTT Hub India - Movies & Series Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiT1RUIEh1YiBJbmRpYSIsInNob3J0X25hbWUiOiJPVFRIdWIiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmOWZhZmIiLCJ0aGVtZV9jb2xvciI6IiMxZjJkMzciLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lpSUdacGJHejlJaU14WmpKa016Y2lQZ284Y21WamRDQjNhV1IwYUQwaU1USTRJU0JvWldsbmFIUTlJakV5T0NJaVB6NDhMM04yWno0PSIsInNpemVzIjoiMTI4eDEyOCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+  <style>
+    body { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    .card { 
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .card:hover { 
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    }
+    .sidebar {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .tab-button {
+      transition: all 0.3s ease;
+      border-radius: 15px;
+    }
+    .tab-button.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .release-tab.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      color: white !important;
+    }
+    .genre-tag {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .platform-badge {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .rating-badge {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      color: #333;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+    }
+    .vote-count {
+      color: #666;
+      font-size: 0.65rem;
+      margin-top: 2px;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        position: fixed;
+        z-index: 1000;
+        height: 100vh;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+    }
+    .loading-shimmer {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Mobile Menu Button -->
+  <button id="mobileMenuBtn" class="md:hidden fixed top-4 left-4 z-50 glass-card text-white p-3 rounded-full shadow-lg">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+  </button>
+
+  <!-- Share Button -->
+  <button id="shareBtn" class="fixed top-4 right-4 z-50 bg-gradient-to-r from-purple-500 to-blue-600 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+    </svg>
+  </button>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-80 p-6 shadow-2xl flex-shrink-0">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">🎬 OTT Hub</h1>
+        <button id="closeSidebar" class="md:hidden text-gray-500">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="grid grid-cols-2 gap-2 mb-6">
+        <button id="allTab" class="tab-button active px-4 py-3 text-sm font-medium">All Content</button>
+        <button id="watchlistTab" class="tab-button px-4 py-3 text-sm font-medium">Watchlist</button>
+      </div>
+
+      <!-- Release Tabs -->
+      <div class="mb-6">
+        <h3 class="font-semibold mb-3 text-gray-700">🗓️ Release Timeline</h3>
+        <div class="space-y-2">
+          <button id="thisWeekTab" class="release-tab w-full text-left p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 hover:bg-red-100 transition-all">
+            <div class="font-medium">This Week</div>
+            <div class="text-xs opacity-75">Latest releases</div>
+          </button>
+          <button id="nextWeekTab" class="release-tab w-full text-left p-3 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 transition-all">
+            <div class="font-medium">Next Week</div>
+            <div class="text-xs opacity-75">Coming soon</div>
+          </button>
+          <button id="thisMonthTab" class="release-tab w-full text-left p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-all">
+            <div class="font-medium">This Month</div>
+            <div class="text-xs opacity-75">Monthly releases</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="space-y-4">
+        <h3 class="font-semibold text-gray-700">🎯 Filters</h3>
+        
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-700">Content Type</label>
+          <select id="typeFilter" class="w-full p-3 border rounded-xl bg-white shadow-sm">
+            <option value="">All Types</option>
+            <option value="movie">Movies</option>
+            <option value="tv">TV Series</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-700">Availability</label>
+          <select id="availabilityFilter" class="w-full p-3 border rounded-xl bg-white shadow-sm">
+            <option value="">All</option>
+            <option value="OTT">OTT Platforms</option>
+            <option value="Theater">In Theaters</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-700">Platform</label>
+          <select id="platformFilter" class="w-full p-3 border rounded-xl bg-white shadow-sm">
+            <option value="">All Platforms</option>
+            <option value="Netflix">Netflix</option>
+            <option value="Amazon Prime">Amazon Prime</option>
+            <option value="Disney+ Hotstar">Disney+ Hotstar</option>
+            <option value="SonyLIV">SonyLIV</option>
+            <option value="Zee5">Zee5</option>
+            <option value="Voot">Voot</option>
+            <option value="Theater">In Theaters</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-700">Language</label>
+          <select id="languageFilter" class="w-full p-3 border rounded-xl bg-white shadow-sm">
+            <option value="">All Languages</option>
+            <option value="hi">Hindi</option>
+            <option value="en">English</option>
+            <option value="ta">Tamil</option>
+            <option value="te">Telugu</option>
+            <option value="ml">Malayalam</option>
+            <option value="bn">Bengali</option>
+            <option value="mr">Marathi</option>
+            <option value="gu">Gujarati</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-700">Min Rating</label>
+          <input type="range" id="ratingFilter" min="0" max="10" step="0.1" class="w-full">
+          <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <span>0</span>
+            <span id="ratingValue" class="font-semibold text-purple-600">0.0</span>
+            <span>10</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-700">Sort By</label>
+          <select id="sortFilter" class="w-full p-3 border rounded-xl bg-white shadow-sm">
+            <option value="popularity">Popularity</option>
+            <option value="rating">Rating</option>
+            <option value="release">Release Date</option>
+            <option value="title">Title</option>
+          </select>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 min-h-screen">
+      <div class="container mx-auto px-4 py-6 md:py-8">
+        <!-- Header -->
+        <div class="mb-8">
+          <h2 id="mainTitle" class="text-3xl md:text-5xl font-bold text-white mb-3 text-center md:text-left">🎬 Discover OTT Content</h2>
+          <p id="mainSubtitle" class="text-white/90 text-lg text-center md:text-left">Explore the latest movies and series from India</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="glass-card rounded-2xl p-6 text-white text-center">
+            <div class="text-3xl font-bold mb-1" id="totalCount">0</div>
+            <div class="text-sm opacity-80">Total Content</div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 text-white text-center">
+            <div class="text-3xl font-bold mb-1" id="watchlistCount">0</div>
+            <div class="text-sm opacity-80">Watchlist</div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 text-white text-center">
+            <div class="text-3xl font-bold mb-1" id="watchedCount">0</div>
+            <div class="text-sm opacity-80">Watched</div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 text-white text-center">
+            <div class="text-3xl font-bold mb-1" id="thisWeekCount">0</div>
+            <div class="text-sm opacity-80">This Week</div>
+          </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div id="content" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6"></div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center py-16 text-white">
+          <div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mb-6"></div>
+          <p class="text-xl">Loading awesome content...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-16 text-white hidden">
+          <div class="text-8xl mb-6">🎭</div>
+          <h3 class="text-2xl font-bold mb-3">No content found</h3>
+          <p class="text-white/80 text-lg">Try adjusting your filters</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Configuration
+    const PROXIES = [
+      "https://cors-anywhere.herokuapp.com/",
+      "https://api.codetabs.com/v1/proxy?quest=",
+      "https://thingproxy.freeboard.io/fetch/"
+    ];
+    const API_KEY = "1794ef2223767aec4d7aa4b91813b05e";
+    const IMG_URL = "https://image.tmdb.org/t/p/w500";
+
+    // Genre mapping
+    const GENRE_MAP = {
+      28: 'Action', 35: 'Comedy', 18: 'Drama', 27: 'Horror', 10749: 'Romance',
+      53: 'Thriller', 16: 'Animation', 99: 'Documentary', 878: 'Sci-Fi', 14: 'Fantasy',
+      80: 'Crime', 12: 'Adventure', 9648: 'Mystery', 10751: 'Family', 36: 'History',
+      10752: 'War', 37: 'Western', 10402: 'Music', 10770: 'TV Movie'
+    };
+
+    // Language mapping
+    const LANGUAGE_MAP = {
+      'hi': 'Hindi', 'en': 'English', 'ta': 'Tamil', 'te': 'Telugu', 
+      'ml': 'Malayalam', 'bn': 'Bengali', 'mr': 'Marathi', 'gu': 'Gujarati',
+      'kn': 'Kannada', 'pa': 'Punjabi', 'or': 'Odia', 'as': 'Assamese'
+    };
+
+    // Platform data for more accurate detection
+    const PLATFORM_DATABASE = {
+      // Netflix titles (sample)
+      'RRR': 'Netflix', 'Gangubai Kathiawadi': 'Netflix', 'Darlings': 'Netflix',
+      'Laal Singh Chaddha': 'Netflix', 'Thar': 'Netflix', 'Monica, O My Darling': 'Netflix',
+      // Amazon Prime titles (sample)
+      'Pushpa: The Rise': 'Amazon Prime', 'The Family Man': 'Amazon Prime', 'Mumbai Diaries 26/11': 'Amazon Prime',
+      'Shershah': 'Amazon Prime', 'Sardar Udham': 'Amazon Prime', 'Shantaram': 'Amazon Prime',
+      // Disney+ Hotstar titles (sample)
+      'Brahmastra Part One: Shiva': 'Disney+ Hotstar', 'Human': 'Disney+ Hotstar', 'Arya': 'Disney+ Hotstar',
+      // SonyLIV titles (sample)
+      'Scam 1992: The Harshad Mehta Story': 'SonyLIV', 'Rocket Boys': 'SonyLIV', 'Gullak': 'SonyLIV', 'Maharani': 'SonyLIV',
+      // Zee5 titles (sample)
+      'The Kashmir Files': 'Zee5', 'Nail Polish': 'Zee5'
+    };
+
+    // Global state
+    let allData = [];
+    let watchlist = JSON.parse(localStorage.getItem('ottWatchlist') || '[]');
+    let watchedList = JSON.parse(localStorage.getItem('ottWatched') || '[]');
+    let currentView = 'all';
+    let currentReleaseFilter = null;
+
+    // Performance optimization - debounce function
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // Sample data with enhanced information
+    const sampleData = [
+      {
+        id: 1, title: "RRR", type: "movie", year: "2022", rating: 8.8,
+        status: "released", platform: "Netflix", popularity: 950,
+        release_date: "2022-03-25", poster: "https://image.tmdb.org/t/p/w500/qsdjk9oAKSQMWs0Vt5Pyfh6O4GZ.jpg",
+        genre_ids: [28, 18], original_language: "te", vote_count: 2500
+      },
+      {
+        id: 2, title: "Scam 1992: The Harshad Mehta Story", type: "tv", year: "2020", rating: 9.5,
+        status: "released", platform: "SonyLIV", popularity: 920,
+        release_date: "2020-10-09", poster: "https://image.tmdb.org/t/p/w500/qIrJdLv35LzqNe2w9zVRmF56KXx.jpg",
+        genre_ids: [18, 80], original_language: "hi", vote_count: 1800
+      },
+      {
+        id: 3, title: "Pushpa: The Rise", type: "movie", year: "2021", rating: 7.6,
+        status: "released", platform: "Amazon Prime", popularity: 890,
+        release_date: "2021-12-17", poster: "https://image.tmdb.org/t/p/w500/uLQqTUlTNWZ5scm4wpOLjDHzrFm.jpg",
+        genre_ids: [28, 80], original_language: "te", vote_count: 3200
+      },
+      // Adding more sample data for better testing
+      {
+        id: 4, title: "The Family Man", type: "tv", year: "2019", rating: 8.7,
+        status: "released", platform: "Amazon Prime", popularity: 880,
+        release_date: "2019-09-20", poster: "https://image.tmdb.org/t/p/w500/dSXTqKXqrYEoEcQIubtPp4UYwZW.jpg",
+        genre_ids: [28, 18, 53], original_language: "hi", vote_count: 1950
+      },
+      {
+        id: 5, title: "Brahmastra Part One: Shiva", type: "movie", year: "2022", rating: 7.0,
+        status: "released", platform: "Disney+ Hotstar", popularity: 710,
+        release_date: "2022-09-09", poster: "https://image.tmdb.org/t/p/w500/yzH5zvuv4e3LbIg93ZaNMmEWrPD.jpg",
+        genre_ids: [14, 28], original_language: "hi", vote_count: 2800
+      }
+    ];
+
+    // Date utility functions
+    function getWeekBounds() {
+      const now = new Date();
+      const start = new Date(now);
+      start.setDate(now.getDate() - now.getDay());
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      return { start, end };
+    }
+
+    function getNextWeekBounds() {
+      const now = new Date();
+      const start = new Date(now);
+      start.setDate(now.getDate() - now.getDay() + 7);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      return { start, end };
+    }
+
+    function getMonthBounds() {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      return { start, end };
+    }
+
+    function isDateInRange(date, start, end) {
+      const d = new Date(date);
+      return d >= start && d <= end;
+    }
+
+    // Improved platform detection
+    function getPlatformInfo(item) {
+      const title = item.title || item.name;
+      const year = parseInt((item.release_date || item.first_air_date || '').split('-')[0]);
+      const rating = item.vote_average || 0;
+      const isUpcoming = item.release_date 
+        ? (new Date(item.release_date) > new Date())
+        : (new Date(item.first_air_date) > new Date());
+      
+      // Check database first for known titles
+      if (PLATFORM_DATABASE[title]) {
+        return PLATFORM_DATABASE[title];
+      }
+      
+      // If upcoming, likely in theaters first (for movies)
+      if (isUpcoming && item.title) {
+        return 'Theater';
+      }
+      
+      // Recent high-rated movies might be in theaters
+      if (item.title && year >= 2024 && rating >= 7.0) {
+        return Math.random() > 0.6 ? 'Theater' : getRandomOTTPlatform(item);
+      }
+      
+      return getRandomOTTPlatform(item);
+    }
+
+    function getRandomOTTPlatform(item) {
+      // Weight platforms based on content language and type
+      if (item.original_language === 'hi') {
+        const hindiPlatforms = ['Netflix', 'Amazon Prime', 'Disney+ Hotstar', 'SonyLIV', 'Zee5'];
+        return hindiPlatforms[Math.floor(Math.random() * hindiPlatforms.length)];
+      } else if (['ta', 'te', 'ml', 'kn'].includes(item.original_language)) {
+        const southPlatforms = ['Amazon Prime', 'Disney+ Hotstar', 'Netflix', 'Zee5'];
+        return southPlatforms[Math.floor(Math.random() * southPlatforms.length)];
+      } else {
+        const allPlatforms = ['Netflix', 'Amazon Prime', 'Disney+ Hotstar', 'SonyLIV', 'Zee5', 'Voot'];
+        return allPlatforms[Math.floor(Math.random() * allPlatforms.length)];
+      }
+    }
+
+    // Watchlist functions
+    function isInWatchlist(id) {
+      return watchlist.includes(id);
+    }
+
+    function isWatched(id) {
+      return watchedList.includes(id);
+    }
+
+    function addToWatchlist(id) {
+      if (!isInWatchlist(id)) {
+        watchlist.push(id);
+        localStorage.setItem('ottWatchlist', JSON.stringify(watchlist));
+        updateStats();
+      }
+    }
+
+    function removeFromWatchlist(id) {
+      watchlist = watchlist.filter(item => item !== id);
+      localStorage.setItem('ottWatchlist', JSON.stringify(watchlist));
+      updateStats();
+    }
+
+    function markAsWatched(id) {
+      if (!isWatched(id)) {
+        watchedList.push(id);
+        localStorage.setItem('ottWatched', JSON.stringify(watchedList));
+        removeFromWatchlist(id);
+        updateStats();
+      }
+    }
+
+    function markAsUnwatched(id) {
+      watchedList = watchedList.filter(item => item !== id);
+      localStorage.setItem('ottWatched', JSON.stringify(watchedList));
+      updateStats();
+    }
+
+    // Sharing functionality
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({
+          title: '🎬 OTT Hub India',
+          text: 'Discover the latest Indian movies and series on all OTT platforms!',
+          url: window.location.href
+        });
+      } else {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+          alert('Link copied to clipboard! Share it with your friends.');
+        });
+      }
+    }
+
+    // API functions with better error handling
+    async function tryDirectAPI() {
+      try {
+        const endpoints = [];
+        
+        // Fetch more pages for better content variety
+        for (let page = 1; page <= 3; page++) {
+          endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=hi&sort_by=popularity.desc&page=${page}`);
+          endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_origin_country=IN&sort_by=popularity.desc&page=${page}`);
+          endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_original_language=hi&sort_by=popularity.desc&page=${page}`);
+          endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_origin_country=IN&sort_by=popularity.desc&page=${page}`);
+        }
+
+        // Regional languages
+        const regionalLanguages = ['ta', 'te', 'ml', 'bn'];
+        for (const lang of regionalLanguages) {
+          endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=${lang}&sort_by=popularity.desc&page=1`);
+          endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_original_language=${lang}&sort_by=popularity.desc&page=1`);
+        }
+
+        // Trending and top rated
+        endpoints.push(`https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}`);
+        endpoints.push(`https://api.themoviedb.org/3/trending/tv/week?api_key=${API_KEY}`);
+        endpoints.push(`https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&region=IN&page=1`);
+        endpoints.push(`https://api.themoviedb.org/3/tv/top_rated?api_key=${API_KEY}&page=1`);
+        
+        console.log(`📡 Fetching from ${endpoints.length} API endpoints...`);
+        
+        // Use Promise.allSettled for better error handling
+        const promises = endpoints.map(url => 
+          fetch(url).then(response => response.ok ? response.json() : null)
+        );
+        const responses = await Promise.allSettled(promises);
+        
+        let results = [];
+        let successfulCalls = 0;
+        
+        for (const response of responses) {
+          if (response.status === 'fulfilled' && response.value && response.value.results) {
+            results = results.concat(response.value.results);
+            successfulCalls++;
+          }
+        }
+        
+        console.log(`✅ ${successfulCalls}/${endpoints.length} API calls successful`);
+        
+        // Remove duplicates and enhance data
+        const uniqueResults = results.filter((item, index, self) => 
+          index === self.findIndex(t => t.id === item.id)
+        );
+        
+        console.log(`🎬 Found ${results.length} total items, ${uniqueResults.length} unique items`);
+        
+        return uniqueResults;
+      } catch (error) {
+        console.log('Direct API call failed:', error);
+        return [];
+      }
+    }
+
+    async function fetchData() {
+      console.log('🎬 Starting to fetch OTT data...');
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('content').style.display = 'none';
+      
+      let results = [];
+      
+      try {
+        console.log('Trying direct TMDB API...');
+        results = await tryDirectAPI();
+      } catch (error) {
+        console.log('All API methods failed:', error);
+      }
+      
+      if (results.length > 0) {
+        allData = results.map(item => ({
+          id: item.id,
+          title: item.title || item.name,
+          type: item.title ? "movie" : "tv",
+          year: (item.release_date || item.first_air_date || "").split("-")[0],
+          rating: item.vote_average || 0,
+          vote_count: item.vote_count || 0,
+          release_date: item.release_date || item.first_air_date || "",
+          status: item.release_date
+            ? (new Date(item.release_date) > new Date() ? "upcoming" : "released")
+            : (new Date(item.first_air_date) > new Date() ? "upcoming" : "released"),
+          poster: item.poster_path ? IMG_URL + item.poster_path : "",
+          platform: getPlatformInfo(item),
+          popularity: item.popularity || 0,
+          genre_ids: item.genre_ids || [],
+          original_language: item.original_language || 'en',
+          overview: item.overview || ""
+        }));
+        
+        console.log(`✅ Successfully loaded ${allData.length} items from TMDB API`);
+      } else {
+        console.log('⚠️ Using curated sample data');
+        allData = sampleData.map(item => ({
+          ...item,
+          release_date: item.release_date || `${item.year}-01-01`
+        }));
+      }
+
+      // Performance optimization - hide loading and show content
+      setTimeout(() => {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').style.display = 'grid';
+        updateStats();
+        applyCurrentView();
+      }, 100);
+    }
+
+    // Enhanced render function with better UI
+    function render(data) {
+      const container = document.getElementById('content');
+      const loading = document.getElementById('loading');
+      const emptyState = document.getElementById('emptyState');
+      
+      loading.style.display = 'none';
+      
+      if (data.length === 0) {
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      container.style.display = 'grid';
+      emptyState.style.display = 'none';
+
+      // Clear container
+      container.innerHTML = '';
+
+      // Use DocumentFragment for better performance
+      const fragment = document.createDocumentFragment();
+
+      data.forEach(movie => {
+        const isInWL = isInWatchlist(movie.id);
+        const isWL = isWatched(movie.id);
+        const releaseDate = new Date(movie.release_date);
+        const formattedDate = isNaN(releaseDate) ? movie.year : releaseDate.toLocaleDateString();
+        
+        // Get genres
+        const genres = (movie.genre_ids || []).slice(0, 2).map(id => GENRE_MAP[id]).filter(Boolean);
+        const genreText = genres.length > 0 ? genres.join(', ') : 'General';
+        
+        // Get language
+        const language = LANGUAGE_MAP[movie.original_language] || movie.original_language?.toUpperCase() || 'Unknown';
+        
+        // Determine availability type
+        const isOTT = !['Theater', 'Cinema'].includes(movie.platform);
+        
+        const card = document.createElement('div');
+        card.className = 'card rounded-2xl shadow-xl overflow-hidden relative';
+        card.innerHTML = `
+          ${movie.poster ? 
+            `<img src="${movie.poster}" class="w-full h-64 object-cover" alt="${movie.title}" loading="lazy"/>` : 
+            `<div class="w-full h-64 bg-gradient-to-br from-purple-400 via-pink-500 to-blue-500 flex items-center justify-center">
+              <span class="text-white text-5xl">🎬</span>
+            </div>`}
+          
+          <div class="absolute top-3 left-3">
+            <span class="platform-badge">${movie.platform}</span>
+          </div>
+          
+          <div class="absolute top-3 right-3 space-y-2">
+            <button onclick="toggleWatchlist(${movie.id})" class="p-2 rounded-full glass-card text-white hover:scale-110 transition-all">
+              <svg class="w-4 h-4" fill="${isInWL ? '#FFD700' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+              </svg>
+            </button>
+            <button onclick="toggleWatched(${movie.id})" class="p-2 rounded-full glass-card text-white hover:scale-110 transition-all">
+              <svg class="w-4 h-4" fill="${isWL ? '#00FF00' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="p-4">
+            <h3 class="font-bold text-lg mb-2 leading-tight">${movie.title}</h3>
+            
+            <div class="flex items-center justify-between mb-2">
+              <span class="rating-badge">⭐ ${movie.rating.toFixed(1)}</span>
+              <span class="genre-tag">${movie.type.toUpperCase()}</span>
+            </div>
+            
+            <div class="text-xs text-gray-600 space-y-1">
+              <div class="flex justify-between">
+                <span>📅 ${formattedDate}</span>
+                <span>${language}</span>
+              </div>
+              <div class="genre-tag text-center">${genreText}</div>
+              ${movie.vote_count > 0 ? `<div class="vote-count text-center">${movie.vote_count.toLocaleString()} votes</div>` : ''}
+            </div>
+          </div>
+        `;
+        
+        fragment.appendChild(card);
+      });
+
+      container.appendChild(fragment);
+    }
+
+    // Utility functions
+    function sortData(data, sortBy) {
+      switch (sortBy) {
+        case 'rating':
+          return [...data].sort((a, b) => b.rating - a.rating);
+        case 'release':
+          return [...data].sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
+        case 'title':
+          return [...data].sort((a, b) => a.title.localeCompare(b.title));
+        case 'popularity':
+        default:
+          return [...data].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+      }
+    }
+
+    function updateStats() {
+      const thisWeek = getWeekBounds();
+      const thisWeekCount = allData.filter(item => 
+        item.release_date && isDateInRange(item.release_date, thisWeek.start, thisWeek.end)
+      ).length;
+
+      document.getElementById('totalCount').textContent = allData.length;
+      document.getElementById('watchlistCount').textContent = watchlist.length;
+      document.getElementById('watchedCount').textContent = watchedList.length;
+      document.getElementById('thisWeekCount').textContent = thisWeekCount;
+    }
+
+    // Debounced filter function for better performance
+    const applyFiltersAndSort = debounce(function() {
+      const type = document.getElementById('typeFilter').value;
+      const availability = document.getElementById('availabilityFilter').value;
+      const platform = document.getElementById('platformFilter').value;
+      const language = document.getElementById('languageFilter').value;
+      const minRating = parseFloat(document.getElementById('ratingFilter').value) || 0;
+      const sortBy = document.getElementById('sortFilter').value;
+
+      let filtered = getCurrentViewData();
+
+      filtered = filtered.filter(m => {
+        const matchesType = !type || m.type === type;
+        const matchesAvailability = !availability || 
+          (availability === 'OTT' && !['Theater', 'Cinema'].includes(m.platform)) ||
+          (availability === 'Theater' && ['Theater', 'Cinema'].includes(m.platform));
+        const matchesPlatform = !platform || m.platform === platform;
+        const matchesLanguage = !language || m.original_language === language;
+        const matchesRating = m.rating >= minRating;
+        
+        return matchesType && matchesAvailability && matchesPlatform && matchesLanguage && matchesRating;
+      });
+
+      if (currentReleaseFilter) {
+        const bounds = getReleaseFilterBounds(currentReleaseFilter);
+        filtered = filtered.filter(item => 
+          item.release_date && isDateInRange(item.release_date, bounds.start, bounds.end)
+        );
+      }
+
+      const sorted = sortData(filtered, sortBy);
+      render(sorted);
+    }, 300);
+
+    function getCurrentViewData() {
+      switch (currentView) {
+        case 'watchlist':
+          return allData.filter(item => isInWatchlist(item.id));
+        case 'watched':
+          return allData.filter(item => isWatched(item.id));
+        default:
+          return allData;
+      }
+    }
+
+    function getReleaseFilterBounds(filter) {
+      switch (filter) {
+        case 'thisWeek': return getWeekBounds();
+        case 'nextWeek': return getNextWeekBounds();
+        case 'thisMonth': return getMonthBounds();
+        default: return null;
+      }
+    }
+
+    function applyCurrentView() {
+      updateStats();
+      applyFiltersAndSort();
+    }
+
+    // Event handlers
+    function toggleWatchlist(id) {
+      if (isInWatchlist(id)) {
+        removeFromWatchlist(id);
+      } else {
+        addToWatchlist(id);
+      }
+      if (currentView === 'watchlist') {
+        applyCurrentView();
+      } else {
+        // Just update the button appearance
+        updateStats();
+      }
+    }
+
+    function toggleWatched(id) {
+      if (isWatched(id)) {
+        markAsUnwatched(id);
+      } else {
+        markAsWatched(id);
+      }
+      applyCurrentView();
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile menu
+      document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.add('open');
+      });
+
+      document.getElementById('closeSidebar').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('open');
+      });
+
+      // Share functionality
+      document.getElementById('shareBtn').addEventListener('click', shareApp);
+
+      // Tab switching with improved UX
+      document.getElementById('allTab').addEventListener('click', function() {
+        currentView = 'all';
+        currentReleaseFilter = null;
+        updateTabAppearance();
+        this.classList.add('active');
+        document.getElementById('mainTitle').textContent = '🎬 Discover OTT Content';
+        document.getElementById('mainSubtitle').textContent = 'Explore the latest movies and series from India';
+        applyCurrentView();
+      });
+
+      document.getElementById('watchlistTab').addEventListener('click', function() {
+        currentView = 'watchlist';
+        currentReleaseFilter = null;
+        updateTabAppearance();
+        this.classList.add('active');
+        document.getElementById('mainTitle').textContent = '📚 Your Watchlist';
+        document.getElementById('mainSubtitle').textContent = 'Movies and series you want to watch';
+        applyCurrentView();
+      });
+
+      // Release filter tabs
+      document.getElementById('thisWeekTab').addEventListener('click', function() {
+        currentView = 'all';
+        currentReleaseFilter = 'thisWeek';
+        updateTabAppearance();
+        document.getElementById('allTab').classList.add('active');
+        this.classList.add('active');
+        document.getElementById('mainTitle').textContent = '📅 This Week Releases';
+        document.getElementById('mainSubtitle').textContent = 'New content released this week';
+        applyCurrentView();
+      });
+
+      document.getElementById('nextWeekTab').addEventListener('click', function() {
+        currentView = 'all';
+        currentReleaseFilter = 'nextWeek';
+        updateTabAppearance();
+        document.getElementById('allTab').classList.add('active');
+        this.classList.add('active');
+        document.getElementById('mainTitle').textContent = '🔮 Next Week Releases';
+        document.getElementById('mainSubtitle').textContent = 'Upcoming content next week';
+        applyCurrentView();
+      });
+
+      document.getElementById('thisMonthTab').addEventListener('click', function() {
+        currentView = 'all';
+        currentReleaseFilter = 'thisMonth';
+        updateTabAppearance();
+        document.getElementById('allTab').classList.add('active');
+        this.classList.add('active');
+        document.getElementById('mainTitle').textContent = '📆 This Month Releases';
+        document.getElementById('mainSubtitle').textContent = 'Content releasing this month';
+        applyCurrentView();
+      });
+
+      // Filter event listeners
+      document.getElementById('typeFilter').addEventListener('change', applyFiltersAndSort);
+      document.getElementById('availabilityFilter').addEventListener('change', applyFiltersAndSort);
+      document.getElementById('platformFilter').addEventListener('change', applyFiltersAndSort);
+      document.getElementById('languageFilter').addEventListener('change', applyFiltersAndSort);
+      document.getElementById('sortFilter').addEventListener('change', applyFiltersAndSort);
+
+      // Rating slider
+      document.getElementById('ratingFilter').addEventListener('input', function() {
+        document.getElementById('ratingValue').textContent = parseFloat(this.value).toFixed(1);
+        applyFiltersAndSort();
+      });
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        
+        if (window.innerWidth <= 768 && 
+            !sidebar.contains(e.target) && 
+            !mobileBtn.contains(e.target) && 
+            sidebar.classList.contains('open')) {
+          sidebar.classList.remove('open');
+        }
+      });
+
+      // Initialize app
+      fetchData();
+    });
+
+    function updateTabAppearance() {
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.release-tab').forEach(btn => btn.classList.remove('active'));
+    }
+  </script>
+</body>
+</html>
