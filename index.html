@@ -142,18 +142,27 @@
       <div class="mb-6">
         <h3 class="font-semibold mb-3 text-gray-700">🗓️ Release Timeline</h3>
         <div class="space-y-2">
-          <button id="thisWeekTab" class="release-tab w-full text-left p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 hover:bg-red-100 transition-all">
-            <div class="font-medium">This Week</div>
-            <div class="text-xs opacity-75">Latest releases</div>
-          </button>
-          <button id="thisMonthTab" class="release-tab w-full text-left p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-all">
+          <button id="thisMonthTab" class="release-tab w-full text-left p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 hover:bg-red-100 transition-all">
             <div class="font-medium">This Month</div>
-            <div class="text-xs opacity-75">Current month</div>
+            <div class="text-xs opacity-75">Current month releases</div>
           </button>
-          <button id="thisYearTab" class="release-tab w-full text-left p-3 rounded-lg bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 transition-all">
-            <div class="font-medium">This Year</div>
-            <div class="text-xs opacity-75">2024 releases</div>
-          </button>
+          <div>
+            <label class="block text-sm font-medium mb-2 text-gray-700">Select Year</label>
+            <select id="yearFilter" class="w-full p-3 border rounded-xl bg-white shadow-sm">
+              <option value="">All Years</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+              <option value="2018">2018</option>
+              <option value="2017">2017</option>
+              <option value="2016">2016</option>
+              <option value="2015">2015</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -240,21 +249,21 @@
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          <div class="glass-card rounded-xl p-3 text-white text-center">
-            <div class="text-xl font-bold mb-0.5" id="totalCount">0</div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+          <div class="glass-card rounded-lg p-2 text-white text-center">
+            <div class="text-lg font-bold mb-0.5" id="totalCount">0</div>
             <div class="text-xs opacity-80">Total</div>
           </div>
-          <div class="glass-card rounded-xl p-3 text-white text-center">
-            <div class="text-xl font-bold mb-0.5" id="watchlistCount">0</div>
+          <div class="glass-card rounded-lg p-2 text-white text-center">
+            <div class="text-lg font-bold mb-0.5" id="watchlistCount">0</div>
             <div class="text-xs opacity-80">Watchlist</div>
           </div>
-          <div class="glass-card rounded-xl p-3 text-white text-center">
-            <div class="text-xl font-bold mb-0.5" id="watchedCount">0</div>
+          <div class="glass-card rounded-lg p-2 text-white text-center">
+            <div class="text-lg font-bold mb-0.5" id="watchedCount">0</div>
             <div class="text-xs opacity-80">Watched</div>
           </div>
-          <div class="glass-card rounded-xl p-3 text-white text-center">
-            <div class="text-xl font-bold mb-0.5" id="thisWeekCount">0</div>
+          <div class="glass-card rounded-lg p-2 text-white text-center">
+            <div class="text-lg font-bold mb-0.5" id="thisWeekCount">0</div>
             <div class="text-xs opacity-80">This Week</div>
           </div>
         </div>
@@ -513,52 +522,41 @@
         const endpoints = [];
         const currentYear = new Date().getFullYear();
         
-        // Fetch content from last 10 years (2014-2024)
-        for (let year = currentYear - 10; year <= currentYear; year++) {
-          // Hindi content by year
-          endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=hi&primary_release_year=${year}&sort_by=popularity.desc&page=1`);
-          endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_original_language=hi&first_air_date_year=${year}&sort_by=popularity.desc&page=1`);
-          
-          // Indian origin content by year
-          endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_origin_country=IN&primary_release_year=${year}&sort_by=popularity.desc&page=1`);
-          endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_origin_country=IN&first_air_date_year=${year}&sort_by=popularity.desc&page=1`);
+        // Simplified endpoint list to avoid too many requests
+        // Hindi content
+        for (let page = 1; page <= 3; page++) {
+          endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=hi&sort_by=popularity.desc&page=${page}`);
+          endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_original_language=hi&sort_by=popularity.desc&page=${page}`);
         }
         
-        // Fetch more pages for better content variety (recent years)
-        for (let page = 1; page <= 5; page++) {
-          endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=hi&sort_by=popularity.desc&page=${page}`);
+        // Indian origin content
+        for (let page = 1; page <= 3; page++) {
           endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_origin_country=IN&sort_by=popularity.desc&page=${page}`);
-          endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_original_language=hi&sort_by=popularity.desc&page=${page}`);
           endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_origin_country=IN&sort_by=popularity.desc&page=${page}`);
         }
 
-        // Regional languages with multiple pages
-        const regionalLanguages = ['ta', 'te', 'ml', 'bn', 'mr', 'gu', 'kn', 'pa'];
+        // Regional languages - top 2 pages only
+        const regionalLanguages = ['ta', 'te', 'ml', 'bn'];
         for (const lang of regionalLanguages) {
-          for (let page = 1; page <= 2; page++) {
-            endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=${lang}&sort_by=popularity.desc&page=${page}`);
-            endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_original_language=${lang}&sort_by=popularity.desc&page=${page}`);
-          }
+          endpoints.push(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=${lang}&sort_by=popularity.desc&page=1`);
+          endpoints.push(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_original_language=${lang}&sort_by=popularity.desc&page=1`);
         }
 
-        // Trending and top rated with different time periods
+        // Trending content
         endpoints.push(`https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}`);
         endpoints.push(`https://api.themoviedb.org/3/trending/tv/week?api_key=${API_KEY}`);
-        endpoints.push(`https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}`);
-        endpoints.push(`https://api.themoviedb.org/3/trending/tv/day?api_key=${API_KEY}`);
-        
-        // Top rated content
-        for (let page = 1; page <= 3; page++) {
-          endpoints.push(`https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&region=IN&page=${page}`);
-          endpoints.push(`https://api.themoviedb.org/3/tv/top_rated?api_key=${API_KEY}&page=${page}`);
-        }
         
         console.log(`📡 Fetching from ${endpoints.length} API endpoints...`);
         
-        // Use Promise.allSettled for better error handling
+        // Set a timeout for API calls
+        const timeout = 15000; // 15 seconds
         const promises = endpoints.map(url => 
-          fetch(url).then(response => response.ok ? response.json() : null)
+          Promise.race([
+            fetch(url).then(response => response.ok ? response.json() : null),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout))
+          ])
         );
+        
         const responses = await Promise.allSettled(promises);
         
         let results = [];
@@ -765,6 +763,7 @@
       const language = document.getElementById('languageFilter').value;
       const minRating = parseFloat(document.getElementById('ratingFilter').value) || 0;
       const sortBy = document.getElementById('sortFilter').value;
+      const selectedYear = document.getElementById('yearFilter').value;
 
       let filtered = getCurrentViewData();
 
@@ -776,8 +775,9 @@
         const matchesPlatform = !platform || m.platform === platform;
         const matchesLanguage = !language || m.original_language === language;
         const matchesRating = m.rating >= minRating;
+        const matchesYear = !selectedYear || m.year === selectedYear;
         
-        return matchesType && matchesAvailability && matchesPlatform && matchesLanguage && matchesRating;
+        return matchesType && matchesAvailability && matchesPlatform && matchesLanguage && matchesRating && matchesYear;
       });
 
       if (currentReleaseFilter) {
@@ -879,28 +879,6 @@
       });
 
       // Release filter tabs
-      document.getElementById('thisWeekTab').addEventListener('click', function() {
-        currentView = 'all';
-        currentReleaseFilter = 'thisWeek';
-        updateTabAppearance();
-        document.getElementById('allTab').classList.add('active');
-        this.classList.add('active');
-        document.getElementById('mainTitle').textContent = '📅 This Week Releases';
-        document.getElementById('mainSubtitle').textContent = 'New content released this week';
-        applyCurrentView();
-      });
-
-      document.getElementById('nextWeekTab').addEventListener('click', function() {
-        currentView = 'all';
-        currentReleaseFilter = 'nextWeek';
-        updateTabAppearance();
-        document.getElementById('allTab').classList.add('active');
-        this.classList.add('active');
-        document.getElementById('mainTitle').textContent = '🔮 Next Week Releases';
-        document.getElementById('mainSubtitle').textContent = 'Upcoming content next week';
-        applyCurrentView();
-      });
-
       document.getElementById('thisMonthTab').addEventListener('click', function() {
         currentView = 'all';
         currentReleaseFilter = 'thisMonth';
@@ -912,16 +890,6 @@
         applyCurrentView();
       });
 
-      document.getElementById('thisYearTab').addEventListener('click', function() {
-        currentView = 'all';
-        currentReleaseFilter = 'thisYear';
-        updateTabAppearance();
-        document.getElementById('allTab').classList.add('active');
-        this.classList.add('active');
-        document.getElementById('mainTitle').textContent = '📅 This Year Releases';
-        document.getElementById('mainSubtitle').textContent = 'All 2024 releases';
-        applyCurrentView();
-      });
 
       // Filter event listeners
       document.getElementById('typeFilter').addEventListener('change', applyFiltersAndSort);
@@ -929,6 +897,7 @@
       document.getElementById('platformFilter').addEventListener('change', applyFiltersAndSort);
       document.getElementById('languageFilter').addEventListener('change', applyFiltersAndSort);
       document.getElementById('sortFilter').addEventListener('change', applyFiltersAndSort);
+      document.getElementById('yearFilter').addEventListener('change', applyFiltersAndSort);
 
       // Rating slider
       document.getElementById('ratingFilter').addEventListener('input', function() {
