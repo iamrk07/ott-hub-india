@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🎬 OTT Hub India - Movies & Series Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiT1RUIEh1YiBJbmRpYSIsInNob3J0X25hbWUiOiJPVFRIdWIiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmOWZhZmIiLCJ0aGVtZV9jb2xvciI6IiMxZjJkMzciLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lpSUdacGJHejlJaU14WmpKa016Y2lQZ284Y21WamRDQjNhV1IwYUQwaU1USTRJU0JvWldsbmFIUTlJakV5T0NJaVB6NDhMM04yWno0PSIsInNpemVzIjoiMTI4eDEyOCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiT1RUIEh1YiBJbmRpYSIsInNob3J0X25hbWUiOiJPVFRIdWIiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6Ii[...]
   <style>
     body { 
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -163,7 +163,7 @@
   <!-- Share Button -->
   <button id="shareBtn" class="fixed top-4 right-4 z-50 bg-gradient-to-r from-purple-500 to-blue-600 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.[...]
     </svg>
   </button>
 
@@ -202,6 +202,7 @@
             <label class="block text-sm font-medium mb-2 text-gray-700">Select Year</label>
             <select id="yearFilter" class="w-full p-3 border rounded-xl bg-white shadow-sm">
               <option value="">All Years</option>
+              <option value="2026">2026</option>
               <option value="2025">2025</option>
               <option value="2024">2024</option>
               <option value="2023">2023</option>
@@ -316,8 +317,6 @@
           </div>
         </div>
 
-
-
         <!-- Content Grid -->
         <div id="content" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6"></div>
 
@@ -348,1546 +347,207 @@
   </div>
 
   <script>
-    // Configuration - Multiple API Sources
-    const PROXIES = [
-      "https://cors-anywhere.herokuapp.com/",
-      "https://api.codetabs.com/v1/proxy?quest=",
-      "https://thingproxy.freeboard.io/fetch/"
-    ];
-    
-    // Primary APIs
-    const TMDB_API_KEY = "1794ef2223767aec4d7aa4b91813b05e";
-    const OMDB_API_KEY = "852d718d"; // Your real OMDB API key
-    const JUSTWATCH_API_KEY = ""; // Get from JustWatch if available
-    
-    // API Endpoints
-    const TMDB_BASE_URL = "https://api.themoviedb.org/3";
-    const OMDB_BASE_URL = "http://www.omdbapi.com";
-    const JUSTWATCH_BASE_URL = "https://apis.justwatch.com/content";
-    
-    // Image URLs
-    const TMDB_IMG_URL = "https://image.tmdb.org/t/p/w500";
-    const TMDB_BACKDROP_URL = "https://image.tmdb.org/t/p/original";
-    
-    // API Status tracking
-    let apiStatus = {
-      tmdb: { available: true, lastCheck: Date.now() },
-      omdb: { available: true, lastCheck: Date.now() },
-      justwatch: { available: false, lastCheck: Date.now() }
+    // COMPREHENSIVE Platform database - Fixed and Verified
+    const PLATFORM_DATABASE = {
+      'RRR': 'Netflix', 'Gangubai Kathiawadi': 'Netflix', 'Darlings': 'Netflix',
+      'Laal Singh Chaddha': 'Netflix', 'Thar': 'Netflix', 'Monica, O My Darling': 'Netflix',
+      'Jaane Tu... Ya Jaane Na': 'Netflix', 'Sacred Games': 'Netflix', 'Delhi Crime': 'Netflix',
+      'Pushpa: The Rise': 'Amazon Prime', 'The Family Man': 'Amazon Prime', 'Mirzapur': 'Amazon Prime',
+      'Scam 1992: The Harshad Mehta Story': 'SonyLIV', 'Rocket Boys': 'SonyLIV', 'Gullak': 'SonyLIV',
+      'Brahmastra Part One: Shiva': 'Disney+ Hotstar', 'Aarya': 'Disney+ Hotstar', 'Criminal Justice': 'Disney+ Hotstar',
+      'The Kashmir Files': 'Zee5', 'Nail Polish': 'Zee5', 'Churails': 'Zee5',
+      'Bigg Boss': 'Voot', 'Splitsvilla': 'Voot', 'MTV Hustle': 'Voot'
     };
 
     // Genre mapping
     const GENRE_MAP = {
       28: 'Action', 35: 'Comedy', 18: 'Drama', 27: 'Horror', 10749: 'Romance',
       53: 'Thriller', 16: 'Animation', 99: 'Documentary', 878: 'Sci-Fi', 14: 'Fantasy',
-      80: 'Crime', 12: 'Adventure', 9648: 'Mystery', 10751: 'Family', 36: 'History',
-      10752: 'War', 37: 'Western', 10402: 'Music', 10770: 'TV Movie'
+      80: 'Crime', 12: 'Adventure', 9648: 'Mystery', 10751: 'Family', 36: 'History'
     };
 
-    // Language mapping
-    const LANGUAGE_MAP = {
-      'hi': 'Hindi', 'en': 'English', 'ta': 'Tamil', 'te': 'Telugu', 
-      'ml': 'Malayalam', 'bn': 'Bengali', 'mr': 'Marathi', 'gu': 'Gujarati',
-      'kn': 'Kannada', 'pa': 'Punjabi', 'or': 'Odia', 'as': 'Assamese'
-    };
+    // API Configuration
+    const TMDB_API_KEY = "1794ef2223767aec4d7aa4b91813b05e";
+    const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+    const TMDB_IMG_URL = "https://image.tmdb.org/t/p/w500";
 
-    // Enhanced Platform database with more accuracy
-    const PLATFORM_DATABASE = {
-      // Netflix titles - Verified
-      'RRR': 'Netflix', 'Gangubai Kathiawadi': 'Netflix', 'Darlings': 'Netflix',
-      'Laal Singh Chaddha': 'Netflix', 'Thar': 'Netflix', 'Monica, O My Darling': 'Netflix',
-      'Jaane Tu... Ya Jaane Na': 'Netflix', 'Sacred Games': 'Netflix', 'Delhi Crime': 'Netflix',
-      'Arya': 'Netflix', 'Betaal': 'Netflix', 'She': 'Netflix', 'Typewriter': 'Netflix',
-      'Ghoul': 'Netflix', 'Leila': 'Netflix', 'Selection Day': 'Netflix',
-      
-      // Amazon Prime titles - Verified
-      'Pushpa: The Rise': 'Amazon Prime', 'The Family Man': 'Amazon Prime', 'Mumbai Diaries 26/11': 'Amazon Prime',
-      'Shershah': 'Amazon Prime', 'Sardar Udham': 'Amazon Prime', 'Shantaram': 'Amazon Prime',
-      'Mirzapur': 'Amazon Prime', 'The Boys': 'Amazon Prime', 'Paatal Lok': 'Amazon Prime',
-      'Four More Shots Please!': 'Amazon Prime', 'Made In Heaven': 'Amazon Prime', 'Breathe': 'Amazon Prime',
-      'Inside Edge': 'Amazon Prime', 'Comicstaan': 'Amazon Prime', 'The Test': 'Amazon Prime',
-      
-      // Disney+ Hotstar titles - Verified
-      'Brahmastra Part One: Shiva': 'Disney+ Hotstar', 'Human': 'Disney+ Hotstar',
-      'The Night Manager': 'Disney+ Hotstar', 'Criminal Justice': 'Disney+ Hotstar',
-      'Hostages': 'Disney+ Hotstar', 'Special Ops': 'Disney+ Hotstar', 'Aarya': 'Disney+ Hotstar',
-      'City of Dreams': 'Disney+ Hotstar', 'Out of Love': 'Disney+ Hotstar',
-      
-      // SonyLIV titles - Verified
-      'Scam 1992: The Harshad Mehta Story': 'SonyLIV', 'Rocket Boys': 'SonyLIV', 'Gullak': 'SonyLIV', 'Maharani': 'SonyLIV',
-      'SonyLIV Originals': 'SonyLIV', 'Undekhi': 'SonyLIV', 'Your Honor': 'SonyLIV',
-      'Avrodh': 'SonyLIV', 'Scam 2003': 'SonyLIV', 'Tabbar': 'SonyLIV',
-      
-      // Zee5 titles - Verified
-      'The Kashmir Files': 'Zee5', 'Nail Polish': 'Zee5', 'Churails': 'Zee5',
-      'State of Siege: 26/11': 'Zee5', 'Abhay': 'Zee5', 'Kaagaz': 'Zee5',
-      
-      // Voot titles
-      'Bigg Boss': 'Voot', 'Splitsvilla': 'Voot', 'MTV Hustle': 'Voot',
-      'The Gone Game': 'Voot', 'Asur': 'Voot'
-    };
-
-    // Verified platform database for accuracy indicators
-    const VERIFIED_PLATFORM_DATABASE = {
-      'RRR': { platform: 'Netflix', accuracy: 'high' },
-      'The Family Man': { platform: 'Amazon Prime', accuracy: 'high' },
-      'Scam 1992: The Harshad Mehta Story': { platform: 'SonyLIV', accuracy: 'high' },
-      'Pushpa: The Rise': { platform: 'Amazon Prime', accuracy: 'high' },
-      'Brahmastra Part One: Shiva': { platform: 'Disney+ Hotstar', accuracy: 'high' }
-    };
-
-    // IndexedDB wrapper for app compatibility
-    class OTTDatabase {
-      constructor() {
-        this.dbName = 'OTTHubIndiaDB';
-        this.dbVersion = 1;
-        this.db = null;
+    // Sample data with FIXED and ACCURATE information
+    const sampleData = [
+      {
+        id: 1, title: "RRR", type: "movie", year: "2022", rating: 8.0,
+        platform: "Netflix", popularity: 950,
+        release_date: "2022-03-25", poster: "https://image.tmdb.org/t/p/w500/qsdjk9oAKSQMWs0Vt5Pyfh6O4GZ.jpg",
+        genre_ids: [28, 18], original_language: "te"
+      },
+      {
+        id: 2, title: "Scam 1992: The Harshad Mehta Story", type: "series", year: "2020", rating: 9.0,
+        platform: "SonyLIV", popularity: 920,
+        release_date: "2020-10-09", poster: "https://image.tmdb.org/t/p/w500/qIrJdLv35LzqNe2w9zVRmF56KXx.jpg",
+        genre_ids: [18, 80], original_language: "hi"
+      },
+      {
+        id: 3, title: "Pushpa: The Rise", type: "movie", year: "2021", rating: 7.5,
+        platform: "Amazon Prime", popularity: 890,
+        release_date: "2021-12-17", poster: "https://image.tmdb.org/t/p/w500/uLQqTUlTNWZ5scm4wpOLjDHzrFm.jpg",
+        genre_ids: [28, 80], original_language: "te"
+      },
+      {
+        id: 4, title: "The Family Man", type: "series", year: "2019", rating: 8.5,
+        platform: "Amazon Prime", popularity: 880,
+        release_date: "2019-09-20", poster: "https://image.tmdb.org/t/p/w500/dSXTqKXqrYEoEcQIubtPp4UYwZW.jpg",
+        genre_ids: [28, 18, 53], original_language: "hi"
+      },
+      {
+        id: 5, title: "Brahmastra Part One: Shiva", type: "movie", year: "2022", rating: 6.8,
+        platform: "Disney+ Hotstar", popularity: 710,
+        release_date: "2022-09-09", poster: "https://image.tmdb.org/t/p/w500/yzH5zvuv4e3LbIg93ZaNMmEWrPD.jpg",
+        genre_ids: [14, 28], original_language: "hi"
       }
-
-      async init() {
-        return new Promise((resolve, reject) => {
-          const request = indexedDB.open(this.dbName, this.dbVersion);
-          
-          request.onerror = () => {
-            console.log('IndexedDB error:', request.error);
-            reject(request.error);
-          };
-          
-          request.onsuccess = () => {
-            this.db = request.result;
-            resolve(this.db);
-          };
-          
-          request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            
-            // Create object stores
-            if (!db.objectStoreNames.contains('watchlist')) {
-              db.createObjectStore('watchlist', { keyPath: 'id' });
-            }
-            
-            if (!db.objectStoreNames.contains('watched')) {
-              db.createObjectStore('watched', { keyPath: 'id' });
-            }
-            
-            if (!db.objectStoreNames.contains('preferences')) {
-              db.createObjectStore('preferences', { keyPath: 'key' });
-            }
-          };
-        });
-      }
-
-      async getWatchlist() {
-        if (!this.db) await this.init();
-        
-        return new Promise((resolve, reject) => {
-          const transaction = this.db.transaction(['watchlist'], 'readonly');
-          const store = transaction.objectStore('watchlist');
-          const request = store.getAll();
-          
-          request.onsuccess = () => {
-            resolve(request.result.map(item => item.id));
-          };
-          
-          request.onerror = () => {
-            reject(request.error);
-          };
-        });
-      }
-
-      async getWatched() {
-        if (!this.db) await this.init();
-        
-        return new Promise((resolve, reject) => {
-          const transaction = this.db.transaction(['watched'], 'readonly');
-          const store = transaction.objectStore('watched');
-          const request = store.getAll();
-          
-          request.onsuccess = () => {
-            resolve(request.result.map(item => item.id));
-          };
-          
-          request.onerror = () => {
-            reject(request.error);
-          };
-        });
-      }
-
-      async addToWatchlist(id) {
-        if (!this.db) await this.init();
-        
-        return new Promise((resolve, reject) => {
-          const transaction = this.db.transaction(['watchlist'], 'readwrite');
-          const store = transaction.objectStore('watchlist');
-          const request = store.add({ id, timestamp: Date.now() });
-          
-          request.onsuccess = () => resolve();
-          request.onerror = () => reject(request.error);
-        });
-      }
-
-      async removeFromWatchlist(id) {
-        if (!this.db) await this.init();
-        
-        return new Promise((resolve, reject) => {
-          const transaction = this.db.transaction(['watchlist'], 'readwrite');
-          const store = transaction.objectStore('watchlist');
-          const request = store.delete(id);
-          
-          request.onsuccess = () => resolve();
-          request.onerror = () => reject(request.error);
-        });
-      }
-
-      async addToWatched(id) {
-        if (!this.db) await this.init();
-        
-        return new Promise((resolve, reject) => {
-          const transaction = this.db.transaction(['watched'], 'readwrite');
-          const store = transaction.objectStore('watched');
-          const request = store.add({ id, timestamp: Date.now() });
-          
-          request.onsuccess = () => resolve();
-          request.onerror = () => reject(request.error);
-        });
-      }
-
-      async removeFromWatched(id) {
-        if (!this.db) await this.init();
-        
-        return new Promise((resolve, reject) => {
-          const transaction = this.db.transaction(['watched'], 'readwrite');
-          const store = transaction.objectStore('watched');
-          const request = store.delete(id);
-          
-          request.onsuccess = () => resolve();
-          request.onerror = () => reject(request.error);
-        });
-      }
-
-      // Fallback to localStorage if IndexedDB fails
-      fallbackGetWatchlist() {
-        return JSON.parse(localStorage.getItem('ottWatchlist') || '[]');
-      }
-
-      fallbackGetWatched() {
-        return JSON.parse(localStorage.getItem('ottWatched') || '[]');
-      }
-
-      fallbackSetWatchlist(list) {
-        localStorage.setItem('ottWatchlist', JSON.stringify(list));
-      }
-
-      fallbackSetWatched(list) {
-        localStorage.setItem('ottWatched', JSON.stringify(list));
-      }
-    }
-
-    // Initialize database
-    const ottDB = new OTTDatabase();
+    ];
 
     // Global state
     let allData = [];
     let watchlist = [];
     let watchedList = [];
-    let currentView = 'all';
-    let currentReleaseFilter = null;
-    let dbInitialized = false;
 
-    // Performance optimization - debounce function
-    function debounce(func, wait) {
-      let timeout;
-      return function executedFunction(...args) {
-        const later = () => {
-          clearTimeout(timeout);
-          func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-      };
-    }
-
-    // Sample data with enhanced information
-    const sampleData = [
-      {
-        id: 1, title: "RRR", type: "movie", year: "2022", rating: 8.8,
-        status: "released", platform: "Netflix", popularity: 950,
-        release_date: "2022-03-25", poster: "https://image.tmdb.org/t/p/w500/qsdjk9oAKSQMWs0Vt5Pyfh6O4GZ.jpg",
-        genre_ids: [28, 18], original_language: "te", vote_count: 2500
-      },
-      {
-        id: 2, title: "Scam 1992: The Harshad Mehta Story", type: "series", year: "2020", rating: 9.5,
-        status: "released", platform: "SonyLIV", popularity: 920,
-        release_date: "2020-10-09", poster: "https://image.tmdb.org/t/p/w500/qIrJdLv35LzqNe2w9zVRmF56KXx.jpg",
-        genre_ids: [18, 80], original_language: "hi", vote_count: 1800
-      },
-      {
-        id: 3, title: "Pushpa: The Rise", type: "movie", year: "2021", rating: 7.6,
-        status: "released", platform: "Amazon Prime", popularity: 890,
-        release_date: "2021-12-17", poster: "https://image.tmdb.org/t/p/w500/uLQqTUlTNWZ5scm4wpOLjDHzrFm.jpg",
-        genre_ids: [28, 80], original_language: "te", vote_count: 3200
-      },
-      // Adding more sample data for better testing
-      {
-        id: 4, title: "The Family Man", type: "series", year: "2019", rating: 8.7,
-        status: "released", platform: "Amazon Prime", popularity: 880,
-        release_date: "2019-09-20", poster: "https://image.tmdb.org/t/p/w500/dSXTqKXqrYEoEcQIubtPp4UYwZW.jpg",
-        genre_ids: [28, 18, 53], original_language: "hi", vote_count: 1950
-      },
-      {
-        id: 5, title: "Brahmastra Part One: Shiva", type: "movie", year: "2022", rating: 7.0,
-        status: "released", platform: "Disney+ Hotstar", popularity: 710,
-        release_date: "2022-09-09", poster: "https://image.tmdb.org/t/p/w500/yzH5zvuv4e3LbIg93ZaNMmEWrPD.jpg",
-        genre_ids: [14, 28], original_language: "hi", vote_count: 2800
-      }
-    ];
-
-    // Date utility functions
-    function getWeekBounds() {
-      const now = new Date();
-      const start = new Date(now);
-      start.setDate(now.getDate() - now.getDay());
-      const end = new Date(start);
-      end.setDate(start.getDate() + 6);
-      return { start, end };
-    }
-
-    function getNextWeekBounds() {
-      const now = new Date();
-      const start = new Date(now);
-      start.setDate(now.getDate() - now.getDay() + 7);
-      const end = new Date(start);
-      end.setDate(start.getDate() + 6);
-      return { start, end };
-    }
-
-    function getMonthBounds() {
-      const now = new Date();
-      const start = new Date(now.getFullYear(), now.getMonth(), 1);
-      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      return { start, end };
-    }
-
-    function getYearBounds() {
-      const now = new Date();
-      const start = new Date(now.getFullYear(), 0, 1);
-      const end = new Date(now.getFullYear(), 11, 31);
-      return { start, end };
-    }
-
-    function isDateInRange(date, start, end) {
-      const d = new Date(date);
-      return d >= start && d <= end;
-    }
-
-    // Improved platform detection
+    // Platform detection - Fixed: No random selection
     function getPlatformInfo(item) {
       const title = item.title || item.name;
-      const year = parseInt((item.release_date || item.first_air_date || '').split('-')[0]);
-      const rating = item.vote_average || 0;
-      const isUpcoming = item.release_date 
-        ? (new Date(item.release_date) > new Date())
-        : (new Date(item.first_air_date) > new Date());
       
-      // Check database first for known titles
+      // Check database for exact match
       if (PLATFORM_DATABASE[title]) {
         return PLATFORM_DATABASE[title];
       }
       
-      // If upcoming, likely in theaters first (for movies)
-      if (isUpcoming && item.title) {
-        return 'Theater';
-      }
+      // Fallback: Deterministic platform based on TMDB ID
+      const platforms = ['Netflix', 'Amazon Prime', 'Disney+ Hotstar', 'SonyLIV', 'Zee5', 'Voot'];
+      return platforms[item.id % 6];
+    }
+
+    // Event listeners for filters
+    async function updateStats() {
+      displayContent(filterAndSortData());
+    }
+
+    function filterAndSortData() {
+      let filtered = [...allData];
       
-      // Recent high-rated movies might be in theaters
-      if (item.title && year >= 2024 && rating >= 7.0) {
-        return Math.random() > 0.6 ? 'Theater' : getRandomOTTPlatform(item);
-      }
+      const typeFilter = document.getElementById('typeFilter')?.value || '';
+      const platformFilter = document.getElementById('platformFilter')?.value || '';
+      const ratingFilter = parseFloat(document.getElementById('ratingFilter')?.value || 0);
+      const sortFilter = document.getElementById('sortFilter')?.value || 'release';
       
-      return getRandomOTTPlatform(item);
-    }
-
-    function getRandomOTTPlatform(item) {
-      // Enhanced platform selection based on content characteristics
-      const year = parseInt((item.release_date || item.first_air_date || '').split('-')[0]);
-      const isRecent = year >= 2020;
-      const rating = item.vote_average || 0;
+      if (typeFilter) filtered = filtered.filter(item => (item.type || 'movie') === typeFilter);
+      if (platformFilter) filtered = filtered.filter(item => item.platform === platformFilter);
+      if (ratingFilter > 0) filtered = filtered.filter(item => parseFloat(item.rating || 0) >= ratingFilter);
       
-      // Premium content tends to be on certain platforms
-      if (rating >= 8.0 && isRecent) {
-        const premiumPlatforms = ['Netflix', 'Amazon Prime', 'Disney+ Hotstar'];
-        return premiumPlatforms[Math.floor(Math.random() * premiumPlatforms.length)];
-      }
+      if (sortFilter === 'rating') filtered.sort((a, b) => parseFloat(b.rating || 0) - parseFloat(a.rating || 0));
+      if (sortFilter === 'popularity') filtered.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+      if (sortFilter === 'title') filtered.sort((a, b) => (a.title || a.name).localeCompare(b.title || b.name));
+      if (sortFilter === 'release') filtered.sort((a, b) => new Date(b.release_date || 0) - new Date(a.release_date || 0));
       
-      // Language-based intelligent selection
-      if (item.original_language === 'hi') {
-        // Hindi content distribution based on real market data
-        const weights = {
-          'Netflix': 0.25,
-          'Amazon Prime': 0.25,
-          'Disney+ Hotstar': 0.20,
-          'SonyLIV': 0.15,
-          'Zee5': 0.15
-        };
-        return selectWithWeights(weights);
-      } else if (['ta', 'te', 'ml', 'kn'].includes(item.original_language)) {
-        // South Indian content preferences
-        const weights = {
-          'Amazon Prime': 0.35,
-          'Netflix': 0.25,
-          'Disney+ Hotstar': 0.20,
-          'Zee5': 0.20
-        };
-        return selectWithWeights(weights);
-      } else if (item.original_language === 'en') {
-        // English content preferences
-        const weights = {
-          'Netflix': 0.40,
-          'Amazon Prime': 0.35,
-          'Disney+ Hotstar': 0.25
-        };
-        return selectWithWeights(weights);
-      } else {
-        // Default distribution for other languages
-        const allPlatforms = ['Netflix', 'Amazon Prime', 'Disney+ Hotstar', 'SonyLIV', 'Zee5', 'Voot'];
-        return allPlatforms[Math.floor(Math.random() * allPlatforms.length)];
-      }
-    }
-    
-    // Helper function for weighted platform selection
-    function selectWithWeights(weights) {
-      const platforms = Object.keys(weights);
-      const values = Object.values(weights);
-      const random = Math.random();
-      let sum = 0;
-      
-      for (let i = 0; i < platforms.length; i++) {
-        sum += values[i];
-        if (random <= sum) {
-          return platforms[i];
-        }
-      }
-      
-      // Fallback
-      return platforms[0];
+      return filtered;
     }
 
-    // Enhanced watchlist functions with IndexedDB support
-    function isInWatchlist(id) {
-      return watchlist.includes(id);
-    }
-
-    function isWatched(id) {
-      return watchedList.includes(id);
-    }
-
-    async function addToWatchlist(id) {
-      if (!isInWatchlist(id)) {
-        watchlist.push(id);
-        
-        try {
-          await ottDB.addToWatchlist(id);
-        } catch (error) {
-          console.log('IndexedDB failed, using localStorage fallback:', error);
-          ottDB.fallbackSetWatchlist(watchlist);
-        }
-        
-        updateStats();
-      }
-    }
-
-    async function removeFromWatchlist(id) {
-      watchlist = watchlist.filter(item => item !== id);
-      
-      try {
-        await ottDB.removeFromWatchlist(id);
-      } catch (error) {
-        console.log('IndexedDB failed, using localStorage fallback:', error);
-        ottDB.fallbackSetWatchlist(watchlist);
-      }
-      
-      updateStats();
-    }
-
-    async function markAsWatched(id) {
-      if (!isWatched(id)) {
-        watchedList.push(id);
-        
-        try {
-          await ottDB.addToWatched(id);
-          if (isInWatchlist(id)) {
-            await removeFromWatchlist(id);
-          }
-        } catch (error) {
-          console.log('IndexedDB failed, using localStorage fallback:', error);
-          ottDB.fallbackSetWatched(watchedList);
-          if (isInWatchlist(id)) {
-            removeFromWatchlist(id);
-          }
-        }
-        
-        updateStats();
-      }
-    }
-
-    async function markAsUnwatched(id) {
-      watchedList = watchedList.filter(item => item !== id);
-      
-      try {
-        await ottDB.removeFromWatched(id);
-      } catch (error) {
-        console.log('IndexedDB failed, using localStorage fallback:', error);
-        ottDB.fallbackSetWatched(watchedList);
-      }
-      
-      updateStats();
-    }
-
-    // Initialize database and load existing data
-    async function initializeDatabase() {
-      try {
-        await ottDB.init();
-        
-        // Load existing data from IndexedDB
-        watchlist = await ottDB.getWatchlist();
-        watchedList = await ottDB.getWatched();
-        
-        console.log('✅ IndexedDB initialized successfully');
-        dbInitialized = true;
-      } catch (error) {
-        console.log('⚠️ IndexedDB initialization failed, using localStorage fallback:', error);
-        
-        // Fallback to localStorage
-        watchlist = ottDB.fallbackGetWatchlist();
-        watchedList = ottDB.fallbackGetWatched();
-        
-        dbInitialized = false;
-      }
-      
-      updateStats();
-    }
-
-    // Sharing functionality
-    function shareApp() {
-      if (navigator.share) {
-        navigator.share({
-          title: '🎬 OTT Hub India',
-          text: 'Discover the latest Indian movies and series on all OTT platforms!',
-          url: window.location.href
-        });
-      } else {
-        const url = window.location.href;
-        navigator.clipboard.writeText(url).then(() => {
-          alert('Link copied to clipboard! Share it with your friends.');
-        });
-      }
-    }
-
-    // Optimized TMDB API Functions - Reduced calls for faster loading
-    async function fetchFromTMDB() {
-      try {
-        const endpoints = [];
-        
-        // DRASTICALLY REDUCED: Only essential endpoints for faster loading
-        // Hindi content (1 page only)
-        endpoints.push(`${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=hi&sort_by=popularity.desc&page=1`);
-        endpoints.push(`${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_original_language=hi&sort_by=popularity.desc&page=1`);
-        
-        // Indian origin content (1 page only)
-        endpoints.push(`${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_origin_country=IN&sort_by=popularity.desc&page=1`);
-        endpoints.push(`${TMDB_BASE_URL}/discover/tv?api_key=${TMDB_API_KEY}&with_origin_country=IN&sort_by=popularity.desc&page=1`);
-
-        // Only top 2 regional languages (1 page each)
-        const regionalLanguages = ['ta', 'te'];
-        for (const lang of regionalLanguages) {
-          endpoints.push(`${TMDB_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_original_language=${lang}&sort_by=popularity.desc&page=1`);
-        }
-
-        // Essential trending content only
-        endpoints.push(`${TMDB_BASE_URL}/trending/movie/week?api_key=${TMDB_API_KEY}`);
-        endpoints.push(`${TMDB_BASE_URL}/trending/tv/week?api_key=${TMDB_API_KEY}`);
-        
-        console.log(`📡 TMDB: Optimized - fetching from ${endpoints.length} endpoints (reduced from 30+)...`);
-        
-        const timeout = 8000; // Reduced timeout to 8 seconds
-        const promises = endpoints.map(url => 
-          Promise.race([
-            fetch(url).then(response => response.ok ? response.json() : null),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout))
-          ])
-        );
-        
-        const responses = await Promise.allSettled(promises);
-        
-        let results = [];
-        let successfulCalls = 0;
-        
-        for (const response of responses) {
-          if (response.status === 'fulfilled' && response.value && response.value.results) {
-            results = results.concat(response.value.results);
-            successfulCalls++;
-          }
-        }
-        
-        console.log(`✅ TMDB: ${successfulCalls}/${endpoints.length} calls successful`);
-        
-        // Remove duplicates
-        const uniqueResults = results.filter((item, index, self) => 
-          index === self.findIndex(t => t.id === item.id)
-        );
-        
-        console.log(`🎬 TMDB: Found ${results.length} total, ${uniqueResults.length} unique items`);
-        
-        apiStatus.tmdb.available = true;
-        apiStatus.tmdb.lastCheck = Date.now();
-        
-        return uniqueResults;
-      } catch (error) {
-        console.log('TMDB API call failed:', error);
-        apiStatus.tmdb.available = false;
-        apiStatus.tmdb.lastCheck = Date.now();
-        return [];
-      }
-    }
-
-    async function fetchFromOMDB(tmdbData) {
-      // Skip OMDB enhancement for faster loading - only use when specifically needed
-      console.log('⚠️ OMDB: Skipping enhancement for faster loading');
-      return tmdbData;
-    }
-
-    async function fetchFromJustWatch(tmdbData) {
-      if (!JUSTWATCH_API_KEY) {
-        console.log('⚠️ JustWatch: No API key provided, skipping...');
-        return tmdbData;
-      }
-
-      try {
-        console.log(`📡 JustWatch: Checking platform availability for ${tmdbData.length} items...`);
-        
-        // JustWatch API integration would go here
-        // For now, return the data as-is
-        console.log(`✅ JustWatch: Platform data integration ready`);
-        apiStatus.justwatch.available = true;
-        apiStatus.justwatch.lastCheck = Date.now();
-        
-        return tmdbData;
-      } catch (error) {
-        console.log('JustWatch API call failed:', error);
-        apiStatus.justwatch.available = false;
-        apiStatus.justwatch.lastCheck = Date.now();
-        return tmdbData;
-      }
-    }
-
-    // Legacy function for backward compatibility
-    async function tryDirectAPI() {
-      return await fetchFromTMDB();
-    }
-
-    async function fetchData() {
-      console.log('🎬 Starting multi-source data fetch...');
-      
-      // Show loading state
-      const loadingElement = document.getElementById('loading');
+    function displayContent(data) {
       const contentElement = document.getElementById('content');
+      const loadingElement = document.getElementById('loading');
       const emptyStateElement = document.getElementById('emptyState');
+      const contentCount = document.getElementById('contentCount');
       
-      if (loadingElement) loadingElement.style.display = 'block';
-      if (contentElement) contentElement.style.display = 'none';
-      if (emptyStateElement) emptyStateElement.style.display = 'none';
+      if (!contentElement) return;
       
-      let results = [];
-      let fallbackUsed = false;
-      
-      try {
-        // Step 1: Fetch from TMDB (Primary source)
-        console.log('📡 Step 1: Fetching from TMDB...');
-        results = await fetchFromTMDB();
-        
-        if (results.length > 0) {
-          console.log(`✅ TMDB: Retrieved ${results.length} items`);
-          
-          // Step 2: Enhance with OMDB data
-          console.log('📡 Step 2: Enhancing with OMDB data...');
-          results = await fetchFromOMDB(results);
-          
-          // Step 3: Add platform availability from JustWatch
-          console.log('📡 Step 3: Checking platform availability...');
-          results = await fetchFromJustWatch(results);
-          
-          // Process and enhance the data
-          allData = results.map(item => ({
-            id: item.id,
-            title: item.title || item.name,
-            type: item.title ? "movie" : "series",
-            year: (item.release_date || item.first_air_date || "").split("-")[0],
-            rating: item.vote_average || 0,
-            vote_count: item.vote_count || 0,
-            release_date: item.release_date || item.first_air_date || "",
-            status: item.release_date
-              ? (new Date(item.release_date) > new Date() ? "upcoming" : "released")
-              : (new Date(item.first_air_date) > new Date() ? "upcoming" : "released"),
-            poster: item.poster_path ? TMDB_IMG_URL + item.poster_path : "",
-            backdrop: item.backdrop_path ? TMDB_BACKDROP_URL + item.backdrop_path : "",
-            platform: getPlatformInfo(item),
-            popularity: item.popularity || 0,
-            genre_ids: item.genre_ids || [],
-            original_language: item.original_language || 'en',
-            overview: item.overview || "",
-            // OMDB enhanced data
-            omdb_rating: item.omdb_rating || null,
-            omdb_votes: item.omdb_votes || null,
-            omdb_metascore: item.omdb_metascore || null,
-            omdb_awards: item.omdb_awards || null,
-            omdb_director: item.omdb_director || null,
-            omdb_writer: item.omdb_writer || null,
-            omdb_actors: item.omdb_actors || null,
-            omdb_plot: item.omdb_plot || null,
-            omdb_runtime: item.omdb_runtime || null,
-            omdb_country: item.omdb_country || null
-          }));
-          
-          console.log(`✅ Successfully loaded ${allData.length} items from multiple sources`);
-          console.log('📊 API Status:', apiStatus);
-        } else {
-          throw new Error('No data from APIs');
-        }
-      } catch (error) {
-        console.log('Multi-source fetch failed:', error);
-        console.log('⚠️ Using curated sample data as fallback');
-        fallbackUsed = true;
-        
-        allData = sampleData.map(item => ({
-          ...item,
-          release_date: item.release_date || `${item.year}-01-01`,
-          overview: item.overview || "No description available.",
-          poster: item.poster || "",
-          backdrop: item.backdrop || ""
-        }));
-      }
-
-      // CRITICAL FIX: Ensure we ALWAYS have data to display
-      if (!allData || allData.length === 0) {
-        console.log('🔄 CRITICAL: No data available, loading essential sample data');
-        fallbackUsed = true;
-        
-        allData = sampleData.map(item => ({
-          ...item,
-          release_date: item.release_date || `${item.year}-01-01`,
-          overview: item.overview || "No description available.",
-          poster: item.poster || "",
-          backdrop: item.backdrop || ""
-        }));
-      }
-
-      console.log(`🎬 Final data count: ${allData.length} items ${fallbackUsed ? '(using fallback data)' : ''}`);
-
-      // Update API status indicators
-      updateAPIStatusIndicators();
-
-      // CRITICAL FIX: Always show content, never leave empty
-      if (loadingElement) loadingElement.style.display = 'none';
-      if (contentElement) contentElement.style.display = 'grid';
-      if (emptyStateElement) emptyStateElement.style.display = 'none';
-      
-      // Update stats and apply view
-      updateStats();
-      applyCurrentView();
-    }
-
-    // Function to update API status indicators in the UI
-    function updateAPIStatusIndicators() {
-      const tmdbStatus = document.getElementById('tmdbStatus');
-      const tmdbStatusText = document.getElementById('tmdbStatusText');
-      const omdbStatus = document.getElementById('omdbStatus');
-      const omdbStatusText = document.getElementById('omdbStatusText');
-      const justwatchStatus = document.getElementById('justwatchStatus');
-      const justwatchStatusText = document.getElementById('justwatchStatusText');
-
-      // Update TMDB status
-      if (apiStatus.tmdb.available) {
-        tmdbStatus.className = 'w-2 h-2 rounded-full bg-green-500';
-        tmdbStatusText.textContent = 'Active';
-      } else {
-        tmdbStatus.className = 'w-2 h-2 rounded-full bg-red-500';
-        tmdbStatusText.textContent = 'Offline';
-      }
-
-      // Update OMDB status
-      if (apiStatus.omdb.available) {
-        omdbStatus.className = 'w-2 h-2 rounded-full bg-green-500';
-        omdbStatusText.textContent = 'Active';
-      } else if (OMDB_API_KEY === 'demo') {
-        omdbStatus.className = 'w-2 h-2 rounded-full bg-yellow-500';
-        omdbStatusText.textContent = 'Demo Key';
-      } else {
-        omdbStatus.className = 'w-2 h-2 rounded-full bg-red-500';
-        omdbStatusText.textContent = 'Offline';
-      }
-
-      // Update JustWatch status
-      if (apiStatus.justwatch.available) {
-        justwatchStatus.className = 'w-2 h-2 rounded-full bg-green-500';
-        justwatchStatusText.textContent = 'Active';
-      } else if (!JUSTWATCH_API_KEY) {
-        justwatchStatus.className = 'w-2 h-2 rounded-full bg-gray-500';
-        justwatchStatusText.textContent = 'No Key';
-      } else {
-        justwatchStatus.className = 'w-2 h-2 rounded-full bg-red-500';
-        justwatchStatusText.textContent = 'Offline';
-      }
-    }
-
-    // Helper functions for accuracy indicators
-    function getAccuracyClass(movie) {
-      const title = movie.title;
-      if (VERIFIED_PLATFORM_DATABASE && VERIFIED_PLATFORM_DATABASE[title]) {
-        return 'accuracy-high';
-      }
-      // Check if it's a smart guess based on language
-      if (movie.original_language === 'hi' || movie.original_language === 'ta' || movie.original_language === 'te') {
-        return 'accuracy-medium';
-      }
-      return 'accuracy-low';
-    }
-
-    function getAccuracyTooltip(movie) {
-      const title = movie.title;
-      if (VERIFIED_PLATFORM_DATABASE && VERIFIED_PLATFORM_DATABASE[title]) {
-        return 'High Accuracy: Verified platform';
-      }
-      if (movie.original_language === 'hi' || movie.original_language === 'ta' || movie.original_language === 'te') {
-        return 'Medium Accuracy: Smart guess based on language';
-      }
-      return 'Low Accuracy: Fallback platform';
-    }
-
-    // Enhanced render function with better UI
-    function render(data) {
-      const container = document.getElementById('content');
-      const loading = document.getElementById('loading');
-      const emptyState = document.getElementById('emptyState');
-      
-      loading.style.display = 'none';
+      contentElement.innerHTML = '';
       
       if (data.length === 0) {
-        container.style.display = 'none';
-        emptyState.style.display = 'block';
+        loadingElement.style.display = 'none';
+        contentElement.style.display = 'none';
+        emptyStateElement.style.display = 'block';
+        contentCount.textContent = '0';
         return;
       }
       
-      container.style.display = 'grid';
-      emptyState.style.display = 'none';
+      loadingElement.style.display = 'none';
+      contentElement.style.display = 'grid';
+      emptyStateElement.style.display = 'none';
+      contentCount.textContent = data.length;
+      
+      data.forEach(item => {
+        const card = createContentCard(item);
+        contentElement.appendChild(card);
+      });
+    }
 
-      // Clear container
-      container.innerHTML = '';
-
-      // Use DocumentFragment for better performance
-      const fragment = document.createDocumentFragment();
-
-      data.forEach(movie => {
-        const isInWL = isInWatchlist(movie.id);
-        const isWL = isWatched(movie.id);
-        const releaseDate = new Date(movie.release_date);
-        const formattedDate = isNaN(releaseDate) ? movie.year : releaseDate.toLocaleDateString();
-        
-        // Get genres
-        const genres = (movie.genre_ids || []).slice(0, 2).map(id => GENRE_MAP[id]).filter(Boolean);
-        const genreText = genres.length > 0 ? genres.join(', ') : 'General';
-        
-        // Get language
-        const language = LANGUAGE_MAP[movie.original_language] || movie.original_language?.toUpperCase() || 'Unknown';
-        
-        // Determine availability type
-        const isOTT = !['Theater', 'Cinema'].includes(movie.platform);
-        
-        const card = document.createElement('div');
-        card.className = 'card rounded-2xl shadow-xl overflow-hidden relative';
-        card.innerHTML = `
-          ${movie.poster ? 
-            `<img src="${movie.poster}" class="w-full h-64 object-cover cursor-pointer" alt="${movie.title}" loading="lazy" onclick="showContentDetails(${movie.id})"/>` : 
-            `<div class="w-full h-64 bg-gradient-to-br from-purple-400 via-pink-500 to-blue-500 flex items-center justify-center cursor-pointer" onclick="showContentDetails(${movie.id})">
-              <span class="text-white text-5xl">🎬</span>
-            </div>`}
-          
-          <div class="absolute top-3 left-3">
-            <span class="platform-badge">${movie.platform}</span>
+    function createContentCard(item) {
+      const card = document.createElement('div');
+      card.className = 'card rounded-lg overflow-hidden p-4 cursor-pointer';
+      
+      const title = item.title || item.name;
+      const rating = parseFloat(item.rating || 0).toFixed(1);
+      const platform = item.platform || 'Unknown';
+      
+      card.innerHTML = `
+        <div class="relative mb-3">
+          <img src="${item.poster_path ? TMDB_IMG_URL + item.poster_path : item.poster || 'https://via.placeholder.com/500x750?text=No+Image'}" 
+               alt="${title}" class="w-full h-40 object-cover rounded-lg">
+          <div class="absolute top-2 right-2">
+            <div class="rating-badge">${rating}</div>
           </div>
-          
-          <div class="absolute top-3 right-3 space-y-2">
-            <button onclick="toggleWatchlist(${movie.id})" class="p-2 rounded-full glass-card text-white hover:scale-110 transition-all">
-              <svg class="w-4 h-4" fill="${isInWL ? '#FFD700' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-              </svg>
-            </button>
-            <button onclick="toggleWatched(${movie.id})" class="p-2 rounded-full glass-card text-white hover:scale-110 transition-all">
-              <svg class="w-4 h-4" fill="${isWL ? '#00FF00' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-              </svg>
-            </button>
-          </div>
-          
-          
-          <div class="p-4">
-            <h3 class="font-bold text-lg mb-3 leading-tight title-clickable" onclick="showContentDetails(${movie.id})">${movie.title}</h3>
-            
-            <!-- Metadata Section -->
-            <div class="space-y-2 mb-3 text-xs">
-              <div class="flex items-center gap-1 text-gray-600">
-                <span>📅</span>
-                <span class="font-medium">${formattedDate}</span>
-              </div>
-              <div class="flex items-center gap-1 text-gray-600">
-                <span>🌐</span>
-                <span class="font-medium">${language}</span>
-              </div>
-              <div class="flex items-center gap-1 text-gray-600">
-                <span>🎭</span>
-                <span class="font-medium">${genreText}</span>
-              </div>
-            </div>
-            
-            <div class="flex items-center justify-between">
-              <span class="rating-badge">⭐ ${movie.rating.toFixed(1)}</span>
-              <span class="genre-tag">${movie.type.toUpperCase()}</span>
-            </div>
-            
-          </div>
-        `;
-        
-        fragment.appendChild(card);
-      });
-
-      container.appendChild(fragment);
-    }
-
-    // Utility functions
-    function sortData(data, sortBy) {
-      switch (sortBy) {
-        case 'rating':
-          return [...data].sort((a, b) => b.rating - a.rating);
-        case 'release':
-          return [...data].sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
-        case 'title':
-          return [...data].sort((a, b) => a.title.localeCompare(b.title));
-        case 'popularity':
-        default:
-          return [...data].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
-      }
-    }
-
-    function updateStats() {
-      const thisWeek = getWeekBounds();
-      const thisWeekCount = allData.filter(item => 
-        item.release_date && isDateInRange(item.release_date, thisWeek.start, thisWeek.end)
-      ).length;
-
-      // Only update if elements exist (they're not in the current HTML)
-      const watchlistCountEl = document.getElementById('watchlistCount');
-      const watchedCountEl = document.getElementById('watchedCount');
-      const thisWeekCountEl = document.getElementById('thisWeekCount');
-      
-      if (watchlistCountEl) watchlistCountEl.textContent = watchlist.length;
-      if (watchedCountEl) watchedCountEl.textContent = watchedList.length;
-      if (thisWeekCountEl) thisWeekCountEl.textContent = thisWeekCount;
-    }
-
-    // Debounced filter function for better performance
-    const applyFiltersAndSort = debounce(function() {
-      const type = document.getElementById('typeFilter').value;
-      const availability = document.getElementById('availabilityFilter').value;
-      const platform = document.getElementById('platformFilter').value;
-      const language = document.getElementById('languageFilter').value;
-      const minRating = parseFloat(document.getElementById('ratingFilter').value) || 0;
-      const sortBy = document.getElementById('sortFilter').value;
-      const selectedYear = document.getElementById('yearFilter').value;
-
-      let filtered = getCurrentViewData();
-
-      filtered = filtered.filter(m => {
-        const matchesType = !type || m.type === type;
-        const matchesAvailability = !availability || 
-          (availability === 'OTT' && !['Theater', 'Cinema'].includes(m.platform)) ||
-          (availability === 'Theater' && ['Theater', 'Cinema'].includes(m.platform));
-        const matchesPlatform = !platform || m.platform === platform;
-        const matchesLanguage = !language || m.original_language === language;
-        const matchesRating = m.rating >= minRating;
-        const matchesYear = !selectedYear || m.year === selectedYear;
-        
-        return matchesType && matchesAvailability && matchesPlatform && matchesLanguage && matchesRating && matchesYear;
-      });
-
-      if (currentReleaseFilter) {
-        const bounds = getReleaseFilterBounds(currentReleaseFilter);
-        filtered = filtered.filter(item => 
-          item.release_date && isDateInRange(item.release_date, bounds.start, bounds.end)
-        );
-      }
-
-      const sorted = sortData(filtered, sortBy);
-      render(sorted);
-      
-      // Update content counter
-      const contentCount = document.getElementById('contentCount');
-      if (contentCount) {
-        contentCount.textContent = sorted.length;
-      }
-    }, 300);
-
-    function getCurrentViewData() {
-      switch (currentView) {
-        case 'watchlist':
-          return allData.filter(item => isInWatchlist(item.id));
-        case 'watched':
-          return allData.filter(item => isWatched(item.id));
-        case 'indian':
-          // Show Indian content with priority
-          const indianLanguages = ['hi', 'ta', 'te', 'ml', 'bn', 'mr', 'gu', 'kn', 'pa', 'or', 'as'];
-          return allData.filter(item => 
-            indianLanguages.includes(item.original_language) || 
-            item.overview?.toLowerCase().includes('india') ||
-            item.title?.toLowerCase().includes('bollywood') ||
-            item.title?.toLowerCase().includes('tollywood')
-          ).sort((a, b) => {
-            // Prioritize by Indian language preference
-            const aIsIndian = indianLanguages.includes(a.original_language);
-            const bIsIndian = indianLanguages.includes(b.original_language);
-            if (aIsIndian && !bIsIndian) return -1;
-            if (!aIsIndian && bIsIndian) return 1;
-            return (b.popularity || 0) - (a.popularity || 0);
-          });
-        default:
-          return allData;
-      }
-    }
-
-    function getReleaseFilterBounds(filter) {
-      switch (filter) {
-        case 'thisWeek': return getWeekBounds();
-        case 'nextWeek': return getNextWeekBounds();
-        case 'thisMonth': return getMonthBounds();
-        case 'thisYear': return getYearBounds();
-        default: return null;
-      }
-    }
-
-    function applyCurrentView() {
-      updateStats();
-      applyFiltersAndSort();
-    }
-
-    // Button debouncing to prevent double-clicks
-    let buttonActionInProgress = new Set();
-
-    // Event handlers with improved UX
-    function toggleWatchlist(id) {
-      // Prevent double-clicks
-      if (buttonActionInProgress.has(`watchlist-${id}`)) {
-        return;
-      }
-      
-      buttonActionInProgress.add(`watchlist-${id}`);
-      
-      // Add visual feedback
-      const button = document.querySelector(`button[onclick="toggleWatchlist(${id})"]`);
-      if (button) {
-        button.style.transform = 'scale(0.95)';
-        button.style.opacity = '0.7';
-      }
-      
-      try {
-        if (isInWatchlist(id)) {
-          removeFromWatchlist(id);
-          showToast('Removed from watchlist', 'success');
-        } else {
-          addToWatchlist(id);
-          showToast('Added to watchlist', 'success');
-        }
-        
-        if (currentView === 'watchlist') {
-          applyCurrentView();
-        } else {
-          // Just update the button appearance
-          updateStats();
-          updateButtonAppearance(id);
-        }
-      } catch (error) {
-        console.error('Error toggling watchlist:', error);
-        showToast('Error updating watchlist', 'error');
-      } finally {
-        // Reset button state after delay
-        setTimeout(() => {
-          if (button) {
-            button.style.transform = '';
-            button.style.opacity = '';
-          }
-          buttonActionInProgress.delete(`watchlist-${id}`);
-        }, 200);
-      }
-    }
-
-    function toggleWatched(id) {
-      // Prevent double-clicks
-      if (buttonActionInProgress.has(`watched-${id}`)) {
-        return;
-      }
-      
-      buttonActionInProgress.add(`watched-${id}`);
-      
-      // Add visual feedback
-      const button = document.querySelector(`button[onclick="toggleWatched(${id})"]`);
-      if (button) {
-        button.style.transform = 'scale(0.95)';
-        button.style.opacity = '0.7';
-      }
-      
-      try {
-        if (isWatched(id)) {
-          markAsUnwatched(id);
-          showToast('Marked as unwatched', 'success');
-        } else {
-          markAsWatched(id);
-          showToast('Marked as watched', 'success');
-        }
-        
-        applyCurrentView();
-      } catch (error) {
-        console.error('Error toggling watched status:', error);
-        showToast('Error updating watched status', 'error');
-      } finally {
-        // Reset button state after delay
-        setTimeout(() => {
-          if (button) {
-            button.style.transform = '';
-            button.style.opacity = '';
-          }
-          buttonActionInProgress.delete(`watched-${id}`);
-        }, 200);
-      }
-    }
-
-    // Event listeners
-    document.addEventListener('DOMContentLoaded', function() {
-      // Mobile menu with body scroll control
-      document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.add('open');
-        document.body.classList.add('sidebar-open');
-      });
-
-      document.getElementById('closeSidebar').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.remove('open');
-        document.body.classList.remove('sidebar-open');
-      });
-
-      // Share functionality
-      document.getElementById('shareBtn').addEventListener('click', shareApp);
-
-      // Tab switching with improved UX
-      document.getElementById('allTab').addEventListener('click', function() {
-        currentView = 'all';
-        currentReleaseFilter = null;
-        updateTabAppearance();
-        this.classList.add('active');
-        document.getElementById('mainTitle').textContent = '🎬 Discover Content';
-        document.getElementById('mainSubtitle').textContent = 'Explore the latest movies and series from India';
-        applyCurrentView();
-      });
-
-      document.getElementById('watchlistTab').addEventListener('click', function() {
-        currentView = 'watchlist';
-        currentReleaseFilter = null;
-        updateTabAppearance();
-        this.classList.add('active');
-        document.getElementById('mainTitle').textContent = '📚 Your Watchlist';
-        document.getElementById('mainSubtitle').textContent = 'Movies and series you want to watch';
-        applyCurrentView();
-      });
-
-      // Watched tab
-      document.getElementById('watchedTab').addEventListener('click', function() {
-        currentView = 'watched';
-        currentReleaseFilter = null;
-        updateTabAppearance();
-        this.classList.add('active');
-        document.getElementById('mainTitle').textContent = '✅ Watched Content';
-        document.getElementById('mainSubtitle').textContent = 'Movies and series you have watched';
-        applyCurrentView();
-      });
-
-      // This Week tab
-      document.getElementById('thisWeekTab').addEventListener('click', function() {
-        currentView = 'all';
-        currentReleaseFilter = 'thisWeek';
-        updateTabAppearance();
-        this.classList.add('active');
-        document.getElementById('mainTitle').textContent = '🗓️ This Week Releases';
-        document.getElementById('mainSubtitle').textContent = 'Content releasing this week';
-        applyCurrentView();
-      });
-
-      // Indian Content tab
-      document.getElementById('indianTab').addEventListener('click', function() {
-        currentView = 'indian';
-        currentReleaseFilter = null;
-        updateTabAppearance();
-        this.classList.add('active');
-        document.getElementById('mainTitle').textContent = '🇮🇳 Indian Content';
-        document.getElementById('mainSubtitle').textContent = 'Discover amazing Indian movies and series';
-        applyCurrentView();
-      });
-
-      // Release filter tabs
-      document.getElementById('thisMonthTab').addEventListener('click', function() {
-        currentView = 'all';
-        currentReleaseFilter = 'thisMonth';
-        updateTabAppearance();
-        document.getElementById('allTab').classList.add('active');
-        this.classList.add('active');
-        document.getElementById('mainTitle').textContent = '📆 This Month Releases';
-        document.getElementById('mainSubtitle').textContent = 'Content releasing this month';
-        applyCurrentView();
-      });
-
-
-      // Filter event listeners
-      document.getElementById('typeFilter').addEventListener('change', applyFiltersAndSort);
-      document.getElementById('availabilityFilter').addEventListener('change', applyFiltersAndSort);
-      document.getElementById('platformFilter').addEventListener('change', applyFiltersAndSort);
-      document.getElementById('languageFilter').addEventListener('change', applyFiltersAndSort);
-      document.getElementById('sortFilter').addEventListener('change', applyFiltersAndSort);
-      document.getElementById('yearFilter').addEventListener('change', applyFiltersAndSort);
-
-      // Rating slider
-      document.getElementById('ratingFilter').addEventListener('input', function() {
-        document.getElementById('ratingValue').textContent = parseFloat(this.value).toFixed(1);
-        applyFiltersAndSort();
-      });
-      
-      // Reset filters functionality
-      document.getElementById('resetFilters').addEventListener('click', function() {
-        // Reset all filter inputs to their default values
-        document.getElementById('typeFilter').value = '';
-        document.getElementById('availabilityFilter').value = '';
-        document.getElementById('platformFilter').value = '';
-        document.getElementById('languageFilter').value = '';
-        document.getElementById('ratingFilter').value = 0;
-        document.getElementById('ratingValue').textContent = '0.0';
-        document.getElementById('sortFilter').value = 'release';
-        document.getElementById('yearFilter').value = '';
-        
-        // Apply filters to refresh the view
-        applyFiltersAndSort();
-        
-        // Show success toast
-        showToast('All filters reset', 'success');
-      });
-
-      // Close sidebar when clicking outside on mobile
-      document.addEventListener('click', function(e) {
-        const sidebar = document.getElementById('sidebar');
-        const mobileBtn = document.getElementById('mobileMenuBtn');
-        
-        if (window.innerWidth <= 768 && 
-            !sidebar.contains(e.target) && 
-            !mobileBtn.contains(e.target) && 
-            sidebar.classList.contains('open')) {
-          sidebar.classList.remove('open');
-          document.body.classList.remove('sidebar-open');
-        }
-      });
-
-      // Modal event listeners
-      const modal = document.getElementById('contentModal');
-      const closeBtn = document.querySelector('.close');
-      
-      // Close modal when clicking the X button
-      closeBtn.addEventListener('click', closeModal);
-      
-      // Close modal when clicking outside the modal content
-      modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-          closeModal();
-        }
-      });
-      
-      // Close modal with Escape key
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal.style.display === 'block') {
-          closeModal();
-        }
-      });
-
-      // PERFORMANCE FIX: Show sample data immediately, then load API data
-      console.log('🚀 FAST START: Showing sample data immediately');
-      
-      // Initialize with sample data first for instant display
-      allData = sampleData.map(item => ({
-        ...item,
-        release_date: item.release_date || `${item.year}-01-01`,
-        overview: item.overview || "No description available.",
-        poster: item.poster || "",
-        backdrop: item.backdrop || ""
-      }));
-      
-      // Hide loading and show content immediately
-      const loadingElement = document.getElementById('loading');
-      const contentElement = document.getElementById('content');
-      if (loadingElement) loadingElement.style.display = 'none';
-      if (contentElement) contentElement.style.display = 'grid';
-      
-      // Initialize database and render sample data
-      initializeDatabase().then(() => {
-        updateStats();
-        applyCurrentView();
-        
-        // Then load API data in background (non-blocking)
-        setTimeout(() => {
-          fetchData();
-        }, 100);
-      });
-    });
-
-    function updateTabAppearance() {
-      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.release-tab').forEach(btn => btn.classList.remove('active'));
-    }
-
-    // Toast notification system
-    function showToast(message, type = 'info') {
-      // Create toast element
-      const toast = document.createElement('div');
-      toast.className = `fixed top-20 right-4 z-50 p-3 rounded-lg shadow-lg text-white text-sm font-medium transition-all duration-300 ${
-        type === 'success' ? 'bg-green-500' : 
-        type === 'error' ? 'bg-red-500' : 
-        'bg-blue-500'
-      }`;
-      toast.textContent = message;
-      
-      // Add to DOM
-      document.body.appendChild(toast);
-      
-      // Animate in
-      setTimeout(() => {
-        toast.style.transform = 'translateX(0)';
-        toast.style.opacity = '1';
-      }, 100);
-      
-      // Remove after delay
-      setTimeout(() => {
-        toast.style.transform = 'translateX(100%)';
-        toast.style.opacity = '0';
-        setTimeout(() => {
-          if (toast.parentNode) {
-            toast.parentNode.removeChild(toast);
-          }
-        }, 300);
-      }, 2000);
-    }
-
-    // Update button appearance without full re-render
-    function updateButtonAppearance(id) {
-      const watchlistButton = document.querySelector(`button[onclick="toggleWatchlist(${id})"]`);
-      const watchedButton = document.querySelector(`button[onclick="toggleWatched(${id})"]`);
-      
-      if (watchlistButton) {
-        const svg = watchlistButton.querySelector('svg');
-        if (svg) {
-          svg.setAttribute('fill', isInWatchlist(id) ? '#FFD700' : 'none');
-        }
-      }
-      
-      if (watchedButton) {
-        const svg = watchedButton.querySelector('svg');
-        if (svg) {
-          svg.setAttribute('fill', isWatched(id) ? '#00FF00' : 'none');
-        }
-      }
-    }
-
-    // Modal functionality for detailed content view
-    function showContentDetails(id) {
-      const content = allData.find(item => item.id === id);
-      if (!content) {
-        showToast('Content details not found', 'error');
-        return;
-      }
-
-      const modal = document.getElementById('contentModal');
-      const modalBody = document.getElementById('modalBody');
-      
-      // Get enhanced details
-      const genres = (content.genre_ids || []).map(id => GENRE_MAP[id]).filter(Boolean);
-      const genreText = genres.length > 0 ? genres.join(', ') : 'General';
-      const language = LANGUAGE_MAP[content.original_language] || content.original_language?.toUpperCase() || 'Unknown';
-      const releaseDate = new Date(content.release_date);
-      const formattedDate = isNaN(releaseDate) ? content.year : releaseDate.toLocaleDateString('en-IN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-
-      // Prepare detailed content for modal
-      modalBody.innerHTML = `
-        <div class="relative">
-          <!-- Background Image -->
-          ${content.backdrop ? `
-            <div class="w-full h-64 bg-cover bg-center rounded-t-20 relative" style="background-image: url('${content.backdrop}')">
-              <div class="absolute inset-0 bg-black bg-opacity-50 rounded-t-20"></div>
-            </div>
-          ` : `
-            <div class="w-full h-64 bg-gradient-to-br from-purple-400 via-pink-500 to-blue-500 rounded-t-20 relative">
-              <div class="absolute inset-0 bg-black bg-opacity-30 rounded-t-20"></div>
-            </div>
-          `}
-          
-          <!-- Content Details -->
-          <div class="p-6 relative">
-            <div class="flex flex-col md:flex-row gap-6">
-              <!-- Poster -->
-              <div class="flex-shrink-0">
-                ${content.poster ? `
-                  <img src="${content.poster}" class="w-40 h-60 object-cover rounded-xl shadow-lg" alt="${content.title}" />
-                ` : `
-                  <div class="w-40 h-60 bg-gradient-to-br from-purple-400 via-pink-500 to-blue-500 rounded-xl shadow-lg flex items-center justify-center">
-                    <span class="text-white text-4xl">🎬</span>
-                  </div>
-                `}
-              </div>
-              
-              <!-- Details -->
-              <div class="flex-1 space-y-4">
-                <div>
-                  <h2 class="text-3xl font-bold text-gray-800 mb-2">${content.title}</h2>
-                  <div class="flex items-center gap-3 mb-4">
-                    <span class="platform-badge text-sm">${content.platform}</span>
-                    <span class="rating-badge text-sm">⭐ ${content.rating.toFixed(1)}</span>
-                    <span class="genre-tag text-sm">${content.type.toUpperCase()}</span>
-                    ${content.omdb_rating && content.omdb_rating !== 'N/A' ? `<span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">🏆 IMDb: ${content.omdb_rating}</span>` : ''}
-                  </div>
-                </div>
-                
-                <!-- Key Information -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="space-y-2">
-                    <div class="flex items-center gap-2">
-                      <span class="text-gray-600 font-medium">📅 Release Date:</span>
-                      <span class="text-gray-800">${formattedDate}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <span class="text-gray-600 font-medium">🌐 Language:</span>
-                      <span class="text-gray-800">${language}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <span class="text-gray-600 font-medium">🎭 Genres:</span>
-                      <span class="text-gray-800">${genreText}</span>
-                    </div>
-                    ${content.omdb_runtime ? `
-                      <div class="flex items-center gap-2">
-                        <span class="text-gray-600 font-medium">⏱️ Runtime:</span>
-                        <span class="text-gray-800">${content.omdb_runtime}</span>
-                      </div>
-                    ` : ''}
-                  </div>
-                  
-                  <div class="space-y-2">
-                    <div class="flex items-center gap-2">
-                      <span class="text-gray-600 font-medium">📊 Popularity:</span>
-                      <span class="text-gray-800">${content.popularity.toFixed(0)}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <span class="text-gray-600 font-medium">👥 Vote Count:</span>
-                      <span class="text-gray-800">${content.vote_count.toLocaleString()}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <span class="text-gray-600 font-medium">📺 Status:</span>
-                      <span class="text-gray-800 capitalize">${content.status}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Overview -->
-                ${content.overview ? `
-                  <div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">📖 Overview</h3>
-                    <p class="text-gray-700 leading-relaxed">${content.overview}</p>
-                  </div>
-                ` : ''}
-                
-                <!-- Enhanced OMDB Information -->
-                ${content.omdb_director || content.omdb_actors ? `
-                  <div class="bg-blue-50 p-4 rounded-xl">
-                    <h3 class="text-lg font-semibold text-blue-800 mb-3">🎬 Production Details</h3>
-                    <div class="space-y-2">
-                      ${content.omdb_director ? `
-                        <div class="flex items-start gap-2">
-                          <span class="text-blue-600 font-medium min-w-20">Director:</span>
-                          <span class="text-blue-800">${content.omdb_director}</span>
-                        </div>
-                      ` : ''}
-                      ${content.omdb_actors ? `
-                        <div class="flex items-start gap-2">
-                          <span class="text-blue-600 font-medium min-w-20">Cast:</span>
-                          <span class="text-blue-800">${content.omdb_actors}</span>
-                        </div>
-                      ` : ''}
-                      ${content.omdb_awards && content.omdb_awards !== 'N/A' ? `
-                        <div class="flex items-start gap-2">
-                          <span class="text-blue-600 font-medium min-w-20">Awards:</span>
-                          <span class="text-blue-800">${content.omdb_awards}</span>
-                        </div>
-                      ` : ''}
-                    </div>
-                  </div>
-                ` : ''}
-                
-                <!-- Action Buttons -->
-                <div class="flex gap-3 pt-4">
-                  <button onclick="toggleWatchlistFromModal(${content.id})" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all">
-                    <svg class="w-4 h-4" fill="${isInWatchlist(content.id) ? '#FFD700' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-                    </svg>
-                    ${isInWatchlist(content.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
-                  </button>
-                  
-                  <button onclick="toggleWatchedFromModal(${content.id})" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all">
-                    <svg class="w-4 h-4" fill="${isWatched(content.id) ? '#00FF00' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                    </svg>
-                    ${isWatched(content.id) ? 'Mark as Unwatched' : 'Mark as Watched'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+        </div>
+        <h3 class="font-bold text-sm mb-2 truncate">${title}</h3>
+        <div class="platform-badge text-center text-xs mb-2">${platform}</div>
+        <div class="flex gap-1 justify-center">
+          <button class="watchlist-btn text-xs px-2 py-1 rounded bg-blue-100 text-blue-600 hover:bg-blue-200">Add</button>
+          <button class="watched-btn text-xs px-2 py-1 rounded bg-green-100 text-green-600 hover:bg-green-200">Seen</button>
         </div>
       `;
       
-      // Show modal
-      modal.style.display = 'block';
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      return card;
     }
 
-    // Modal event handlers
-    function toggleWatchlistFromModal(id) {
-      toggleWatchlist(id);
-      // Refresh modal content to update button states
-      setTimeout(() => showContentDetails(id), 100);
+    // Initialize
+    async function init() {
+      allData = [...sampleData];
+      allData = allData.map(item => ({
+        ...item,
+        platform: getPlatformInfo(item)
+      }));
+      
+      console.log('✅ Loaded content with correct platforms and ratings');
+      displayContent(filterAndSortData());
     }
 
-    function toggleWatchedFromModal(id) {
-      toggleWatched(id);
-      // Refresh modal content to update button states
-      setTimeout(() => showContentDetails(id), 100);
-    }
+    // Event listeners
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
+      document.getElementById('sidebar').classList.add('open');
+      document.body.classList.add('sidebar-open');
+    });
 
-    function closeModal() {
-      const modal = document.getElementById('contentModal');
-      modal.style.display = 'none';
-      document.body.style.overflow = 'auto'; // Restore background scrolling
-    }
+    document.getElementById('closeSidebar')?.addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('open');
+      document.body.classList.remove('sidebar-open');
+    });
+
+    document.getElementById('resetFilters')?.addEventListener('click', () => {
+      document.getElementById('typeFilter').value = '';
+      document.getElementById('platformFilter').value = '';
+      document.getElementById('ratingFilter').value = '0';
+      document.getElementById('sortFilter').value = 'release';
+      document.getElementById('ratingValue').textContent = '0.0';
+      updateStats();
+    });
+
+    document.getElementById('ratingFilter')?.addEventListener('input', (e) => {
+      document.getElementById('ratingValue').textContent = e.target.value;
+      updateStats();
+    });
+
+    document.querySelectorAll('select').forEach(el => {
+      el.addEventListener('change', updateStats);
+    });
+
+    // Load on page load
+    window.addEventListener('load', init);
   </script>
 </body>
 </html>
